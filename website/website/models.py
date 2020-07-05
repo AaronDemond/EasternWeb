@@ -4,6 +4,10 @@ class Book(models.Model):
 	title = models.CharField(max_length=200)
 	author = models.CharField(max_length=200)
 
+class Asset(models.Model):
+	name = models.CharField(max_length=201,null=True,blank=True)
+	price_url = models.CharField(max_length=400, null=True,blank=True)
+
 class EasternWebAccount(models.Model):
 	username = models.CharField(max_length=200,null=True)
 	password = models.CharField(max_length=200,null=True)

@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Bare - Start Bootstrap Template</title>
+  <title>EasternWeb</title>
 
   <!-- Bootstrap core CSS -->
 {% load static %}
@@ -27,7 +27,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
-
+<div id="login-style" >
 {% if request.user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="/admin">{{request.user}}</a>
@@ -39,6 +39,7 @@
           </li>
 
 {% endif %}
+</div>
           <li class="nav-item active">
             <a class="nav-link" href="#">Home
               <span class="sr-only">(current)</span>
@@ -50,8 +51,8 @@
           <li class="nav-item">
             <a class="nav-link" href="/shop">Shop</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/account">Account</a>
+	<li class="nav-item">
+            <a class="nav-link" href="/invest">Invest</a>
           </li>
         </ul>
       </div>
@@ -59,15 +60,45 @@
   </nav>
 
   <!-- Page Content -->
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12 text-center">
-        <h1 class="mt-5">A Bootstrap 4 Starter Template</h1>
-        <p class="lead">Complete with pre-defined file paths and responsive navigation!</p>
+
+XLM MARKET DATA:
+
+{{xlm}}
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+<!--
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+     <label class="form-check-label" for="exampleCheck1">Check me out</label> 
+  </div>
+-->
+
+</div>
+
+</div> <!-- div row end -->
+</div>
+
+
+</div>
+<hr/>
+<!---
         <ul class="list-unstyled">
           <li>Bootstrap 4.5.0</li>
           <li>jQuery 3.5.1</li>
         </ul>
+-->
       </div>
     </div>
   </div>

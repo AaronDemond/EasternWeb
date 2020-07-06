@@ -1,4 +1,5 @@
 from django.shortcuts import render
+import os
 from django.http import HttpResponse
 from django.template import loader
 from datetime import datetime
@@ -6,64 +7,108 @@ import wget
 import json
 from django.contrib.auth.models import User
 
-#=====================================
+#=============================================================#
 
-def get_xlm_dict():
 
-	now = datetime.now()
-	depth = 'https://api.binance.com/api/v3/depth?symbol=BTCUSDT'
-	trades = 'https://api.binance.com/api/v3/trades?symbol=BTCUSDT'
-	trades2 = 'https://api.binance.com/api/v3/aggTrades?symbol=BTCUSDT'
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#  @get_symbol_summary(str) [LIST]
+#  Returns a list of json objects for every traded pair matching 
+#  the given ticker
+def get_symbol_summary(ticker):
 	summary = 'https://api.binance.com/api/v3/ticker/24hr' 
-
-
-	# wget returns the name of the file storing returned data #
-	#-------------------------------------------------------- #
-
-	##depth_filename = wget.download(depth)
-	##trades_filename = wget.download(trades)
-	#summary_filename = wget.download(summary)
-	
-	import os
 	try:
-		wget.download(summary)
+		summary_file = open('24hr', 'r')
 	except:	
-		pass
-
-	summary_file = open('24hr', 'r')
+		summary_filename = wget.download(summary)
+		summary_file = open(summary_filename, 'r')
+	
 	parsed_json = json.loads(summary_file.read())
 	summary_file.close()
 	os.remove('24hr')
 
-
-	#store the pairs (XLM) we care about
 	pair_listings = []
 	for symbol in parsed_json:
 		SYMBOL_STR = symbol['symbol']
 
-		if SYMBOL_STR.__contains__('XLMUSDT'):
+		if SYMBOL_STR.__contains__(ticker):
 			pair_listings.append(symbol)
+	return pair_listings
 
-		if SYMBOL_STR.__contains__('XLMUSDC'):
-			pair_listings.append(symbol)
-
-		if SYMBOL_STR.__contains__('XLMTUSD'):
-			pair_listings.append(symbol)
-		if SYMBOL_STR.__contains__('XLMETH'):
-			pair_listings.append(symbol)
-
-		if SYMBOL_STR.__contains__('XLMBTC'):
-			pair_listings.append(symbol)
-
-		if SYMBOL_STR.__contains__('XLMBNB'):
-			pair_listings.append(symbol)
-
-
-	return(pair_listings)
+#	@__add_openLastDiff__
+#	add the attribute openLastDiff which is the difference
+#	between the assets most recent traded price and its opening
+#	ticker price
+def __add_openLastDiff__(assetpairlist):
+	for pair in assetpairlist:
+		pair['diff'] = float(pair['lastPrice']) - float(pair['openPrice'])
+		try:
+			pair['diff_percent'] = float(pair['diff']) / float(pair['openPrice'])
+		except:
+			pass
+	return 
 
 
 
-#================================
+
+def get_asset_data():
+		return [xlm,eth,xrp]
+
+
+
+
+
+
+def invest(request):
+	#get data
+	xlm = get_symbol_summary("XLM")
+	eth = get_symbol_summary("ETH")
+	xrp = get_symbol_summary("XRP")
+	
+	#construct context variable
+	context = {'assets': [xlm, eth, xrp]}
+	
+	#add diff attribute
+	for asset in context['assets']:
+		__add_openLastDiff__(asset)
+
+	#return
+	return render(request, 'invest.html', context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#-----------------------------------------------------------------
+#  Home page
+
 def index(request):
 	context = { 'data' : 12345 }
 	try:
@@ -74,18 +119,7 @@ def index(request):
 		value = -1
 	return render(request, 'index.html', context)
 
-def invest(request):
-	context = { 'data' : 12345 }
-	xlm = get_xlm_dict()
-	sym=''
-	for x in xlm:
-		sym = x['symbol']
-		sym = sym[:3]+ ' ' + sym[3:]
-		x['symbol'] = sym
-	
-	context['xlm'] = xlm
-	
-	return render(request, 'invest.html', context)
+
 def about(request):
 	context = { 'data' : 12345 }
 

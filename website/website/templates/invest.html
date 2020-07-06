@@ -59,20 +59,35 @@
     </div>
   </nav>
 
-  <!-- Page Content -->
 
-<h2>XLM MARKET DATA</h2>
-{% for symbol in xlm %}
-symbol:<br>
-{{symbol.symbol}}<br>
-open:<br>
-{{symbol.openPrice}}<br>
-lastPrice:<br>
-{{symbol.lastPrice}}<br><hr>
+  <!-- Page Content -->
+{% load humanize %}
+<h1>Market 24 Hour Data</h1>
+{% for asset_list in assets %}
+
+<div class = "row trading-pair-row">
+	{% for trading_pair in asset_list  %}
+	<div class ="col-lg-4" {% if trading_pair.diff > 0 %} style="background-color:lightgreen"{% else %}style="background-color:red" {% endif %} >
+
+		{{trading_pair.symbol}} <br>
+		open = {{trading_pair.openPrice}} <br>
+		last = {{trading_pair.lastPrice}} <br>
+		diff = {{trading_pair.diff|floatformat:20|intcomma}} <br>
+		diff = {{trading_pair.diff_percent|floatformat:20|intcomma}} <br>
+	</div> <! -- Trading pair row -->
+	{% endfor %}
+<div class="col-lg-12">
+	<hr>
+	<hr>
+	<hr>
+	<hr>
+	<hr>
+</div>
+
+</div> <!-- Asset class -->
 {% endfor %}
-<hr/>
-<hr/>
-<hr/>
+		
+
 
 {{xlm.0}}
 

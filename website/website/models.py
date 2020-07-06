@@ -21,3 +21,11 @@ class GC(models.Model):
 	active = models.BooleanField(default=False)
 	balance = models.FloatField(null=True, blank=True)
 
+class assetpair0(models.Model):
+	name = models.CharField(max_length=200)
+	pct_change = models.FloatField(null=True, blank=True)
+	daily_open =  models.FloatField(null=True, blank=True)
+	last =  models.FloatField(null=True, blank=True)
+	
+
+

@@ -24,14 +24,16 @@ def get_xlm_dict():
 	##trades_filename = wget.download(trades)
 	#summary_filename = wget.download(summary)
 	
-	#  this does work:
-	#try:
-	#	wget.download(summary)
-	#except:	
-	#	pass
+	import os
+	try:
+		wget.download(summary)
+	except:	
+		pass
 
 	summary_file = open('24hr', 'r')
 	parsed_json = json.loads(summary_file.read())
+	summary_file.close()
+	os.remove('24hr')
 
 
 	#store the pairs (XLM) we care about
@@ -74,7 +76,15 @@ def index(request):
 
 def invest(request):
 	context = { 'data' : 12345 }
-	context['xlm'] = get_xlm_dict()
+	xlm = get_xlm_dict()
+	sym=''
+	for x in xlm:
+		sym = x['symbol']
+		sym = sym[:3]+ ' ' + sym[3:]
+		x['symbol'] = sym
+	
+	context['xlm'] = xlm
+	
 	return render(request, 'invest.html', context)
 def about(request):
 	context = { 'data' : 12345 }

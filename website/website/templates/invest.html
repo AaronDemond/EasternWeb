@@ -61,12 +61,20 @@
 
   <!-- Page Content -->
 
-XLM MARKET DATA:
+<h2>XLM MARKET DATA</h2>
+{% for symbol in xlm %}
+symbol:<br>
+{{symbol.symbol}}<br>
+open:<br>
+{{symbol.openPrice}}<br>
+lastPrice:<br>
+{{symbol.lastPrice}}<br><hr>
+{% endfor %}
+<hr/>
+<hr/>
+<hr/>
 
-{{xlm}}
-
-
-
+{{xlm.0}}
 
 
 

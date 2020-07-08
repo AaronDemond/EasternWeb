@@ -31,7 +31,7 @@ def get_symbol_summary(ticker):
 	
 	parsed_json = json.loads(summary_file.read())
 	summary_file.close()
-	#os.rename('24hr', str(time_stamp))
+	os.rename('24hr', str(time_stamp))
 
 	pair_listings = []
 	for symbol in parsed_json:
@@ -87,26 +87,40 @@ def invest(request):
 	xlm = get_symbol_summary("XLM")
 	eth = get_symbol_summary("ETH")
 	xrp = get_symbol_summary("XRP")
+	btc = get_symbol_summary("BTC")
 
-	context = {'assets': [xlm, eth, xrp]}
+	context = {'assets': [xlm, eth, xrp, btc]}
 
 	#add diff attribute
 	for asset in context['assets']:
 		__add_openLastDiff__(asset)
 	
 	
+	#h_xlm = return_highest_spread(xlm)
+	#h_eth = return_highest_spread(eth)
+	#h_xrp = return_highest_spread(xrp)
 	#construct context variable
-	if "True" in request.GET['xlm']:
-		h = return_highest_spread(xlm)
 
-	if "True" in request.GET['eth']:
+	try:
+		input_symbol = request.GET['symbol']
+	except:
+		input_symbol = 'btc'
+
+
+	if "xlm" in input_symbol:
+		h = return_highest_spread(xlm)
+	if "btc" in input_symbol:
+		h = return_highest_spread(btc)
+
+	if "eth" in input_symbol:
 		h = return_highest_spread(eth)
 
-	if "True" in request.GET['xrp']:
+	if "xrp" in input_symbol:
 		h = return_highest_spread(xrp)
-	
 
 	context['highest_spread'] = h
+	
+
 
 
 	#time.sleep(100)

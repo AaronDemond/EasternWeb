@@ -17,21 +17,26 @@ from django.contrib.auth.models import User
 #  Returns a list of json objects for every traded pair matching 
 #  the given ticker
 
+def get_trade_summary():
+	api_url = "https://api.binance.com/api/v3/trades?symbol=BTCUSDT"
+	trade_list_filename = wget.download(api_url)
 
+	trade_list_file = open(trade_list_filename, 'r')
+	trades_json = json.loads(trade_list_file.read())
+
+	trade_list_file.close()
+	time_stamp = datetime.utcnow().timestamp()	
+	os.rename(trade_list_filename, str(time_stamp) + "_tradelist.txt")
+	return trades_json
 
 def get_symbol_summary(ticker):
-	summary = 'https://api.binance.com/api/v3/ticker/24hr' 
-	try:
-		summary_file = open('24hr', 'r')
-		time_stamp = datetime.utcnow().timestamp()	
-	except:	
-		summary_filename = wget.download(summary)
-		time_stamp = datetime.utcnow().timestamp()	
-		summary_file = open(summary_filename, 'r')
-	
+	api_url = 'https://api.binance.com/api/v3/ticker/24hr' 
+	summary_filename = wget.download(api_url)
+	time_stamp = datetime.utcnow().timestamp()	
+	summary_file = open(summary_filename, 'r')
 	parsed_json = json.loads(summary_file.read())
 	summary_file.close()
-	os.rename('24hr', str(time_stamp))
+	os.rename(summary_file, str(time_stamp)+ "_24hrticker.txt")
 
 	pair_listings = []
 	for symbol in parsed_json:
@@ -84,6 +89,7 @@ def return_highest_spread(asset_group):
 
 def invest(request):
 	#get data
+	"""
 	xlm = get_symbol_summary("XLM")
 	eth = get_symbol_summary("ETH")
 	xrp = get_symbol_summary("XRP")
@@ -117,8 +123,10 @@ def invest(request):
 
 	if "xrp" in input_symbol:
 		h = return_highest_spread(xrp)
-
-	context['highest_spread'] = h
+	"""
+	#context['highest_spread'] = h
+	context = {}
+	context['trades'] = get_trade_summary() 
 	
 
 

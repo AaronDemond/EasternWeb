@@ -77,6 +77,15 @@ console.log("test");
 
   <!-- Page Content -->
 {% load humanize %}
+
+<div class="row">
+	<div class="col-lg-12">
+		<h1>test data</h1>
+		{{trades}}
+	</div>
+</div>
+
+
 <h1>Market 24 Hour Data</h1>
 <h2> highest spread (in its category) : {{highest_spread}} </h2>
 {% for asset_list in assets %}

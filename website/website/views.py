@@ -27,6 +27,14 @@ def get_trade_json():
 	trades_json = json.loads(trades.text)
 	return trades_json
 
+def get_binance_json(url):
+	resp = requests.get(url)
+	return json.loads(resp.text)
+
+def get_bookTicker():
+	resp = get_binance_json("https://api.binance.com/api/v3/ticker/bookTicker")
+	return resp 
+
 def get_symbol_summary():
 	api_url = 'https://api.binance.com/api/v3/ticker/24hr' 
 	pairs = requests.get(api_url)
@@ -43,10 +51,23 @@ def get_symbol_summary():
 def invest(request):
 	context = {}
 	pair_listings = get_symbol_summary() #24 hour data
+	bt = get_bookTicker()
+	context['bookTicker'] = bt
+	context['bookTicker_top'] = []
+	print(context['bookTicker'])
+
+	for t in bt:
+		s = float(t['askPrice']) - float(t['bidPrice'])
+		if s>0:
+			x = (s/float(t['askPrice'])) * 100
+			if (x>0.1):
+				context['bookTicker_top'].append({t['symbol'],s,x})
+		
+	
 
 	for pair in pair_listings:
 		pair['priceChangePercent'] = float(pair['priceChangePercent'])
-	context = {'pair_listings': pair_listings}
+	context['pair_listings'] = pair_listings
 
 	trades_json = get_trade_json()
 	context['trades'] = trades_json 
@@ -57,8 +78,8 @@ def invest(request):
 			context['large_trades'].append(trade)
 	context['number_of_large_trades'] = len(context['large_trades'])
 		
+	print(context['bookTicker'])
 	
-
 
 
 	#time.sleep(100)

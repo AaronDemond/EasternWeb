@@ -7,6 +7,7 @@ from datetime import datetime
 import wget
 import json
 from django.contrib.auth.models import User
+import requests
 
 #=============================================================#
 
@@ -17,116 +18,45 @@ from django.contrib.auth.models import User
 #  Returns a list of json objects for every traded pair matching 
 #  the given ticker
 
-def get_trade_summary():
+import os.path
+import time
+import urllib.request
+def get_trade_json():
 	api_url = "https://api.binance.com/api/v3/trades?symbol=BTCUSDT"
-	trade_list_filename = wget.download(api_url)
-
-	trade_list_file = open(trade_list_filename, 'r')
-	trades_json = json.loads(trade_list_file.read())
-
-	trade_list_file.close()
-	time_stamp = datetime.utcnow().timestamp()	
-	os.rename(trade_list_filename, str(time_stamp) + "_tradelist.txt")
+	trades = requests.get(api_url)
+	trades_json = json.loads(trades.text)
 	return trades_json
 
-def get_symbol_summary(ticker):
+def get_symbol_summary():
 	api_url = 'https://api.binance.com/api/v3/ticker/24hr' 
-	summary_filename = wget.download(api_url)
-	time_stamp = datetime.utcnow().timestamp()	
-	summary_file = open(summary_filename, 'r')
-	parsed_json = json.loads(summary_file.read())
-	summary_file.close()
-	os.rename(summary_file, str(time_stamp)+ "_24hrticker.txt")
+	pairs = requests.get(api_url)
+	parsed_json = json.loads(pairs.text)
+	return parsed_json
 
-	pair_listings = []
-	for symbol in parsed_json:
-		SYMBOL_STR = symbol['symbol']
-
-		if SYMBOL_STR.__contains__(ticker):
-			pair_listings.append(symbol)
-	return pair_listings
 
 #	@__add_openLastDiff__
 #	add the attribute openLastDiff which is the difference
 #	between the assets most recent traded price and its opening
 #	ticker price
-def __add_openLastDiff__(assetpairlist):
-	for pair in assetpairlist:
-		pair['diff'] = float(pair['lastPrice']) - float(pair['openPrice'])
-		try:
-			pair['diff_percent'] = float(pair['diff']) / float(pair['openPrice'])
-		except:
-			pass
-	return 
-
-
-
-
-def get_asset_data():
-	return [xlm,eth,xrp]
-
-def return_highest_spread(asset_group):
-
-	x ={}
-	highest = (asset_group[0],0)
-	for pair in asset_group:
-
-		#see if you can access
-		try:
-			test=pair['diff_percent']
-		except:
-			pair['diff_percent']=0
-
-		if pair['diff_percent'] > highest[1]:
-			highest = (pair["symbol"],pair['diff_percent'])
-			
-	
-	return(highest)
-		
-
-
 
 
 def invest(request):
-	#get data
-	"""
-	xlm = get_symbol_summary("XLM")
-	eth = get_symbol_summary("ETH")
-	xrp = get_symbol_summary("XRP")
-	btc = get_symbol_summary("BTC")
-
-	context = {'assets': [xlm, eth, xrp, btc]}
-
-	#add diff attribute
-	for asset in context['assets']:
-		__add_openLastDiff__(asset)
-	
-	
-	#h_xlm = return_highest_spread(xlm)
-	#h_eth = return_highest_spread(eth)
-	#h_xrp = return_highest_spread(xrp)
-	#construct context variable
-
-	try:
-		input_symbol = request.GET['symbol']
-	except:
-		input_symbol = 'btc'
-
-
-	if "xlm" in input_symbol:
-		h = return_highest_spread(xlm)
-	if "btc" in input_symbol:
-		h = return_highest_spread(btc)
-
-	if "eth" in input_symbol:
-		h = return_highest_spread(eth)
-
-	if "xrp" in input_symbol:
-		h = return_highest_spread(xrp)
-	"""
-	#context['highest_spread'] = h
 	context = {}
-	context['trades'] = get_trade_summary() 
+	pair_listings = get_symbol_summary() #24 hour data
+
+	for pair in pair_listings:
+		pair['priceChangePercent'] = float(pair['priceChangePercent'])
+	context = {'pair_listings': pair_listings}
+
+	trades_json = get_trade_json()
+	context['trades'] = trades_json 
+	context['large_trades'] = []
+
+	for trade in context['trades']:
+		if float(trade['qty']) > 0.1:
+			context['large_trades'].append(trade)
+	context['number_of_large_trades'] = len(context['large_trades'])
+		
 	
 
 

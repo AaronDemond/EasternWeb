@@ -40,7 +40,7 @@
 {% endif %}
 </div>
           <li class="nav-item">
-            <a class="nav-link" href="#">Home
+            <a class="nav-link" href="/">Home
             </a>
           </li>
           <li class="nav-item">
@@ -78,43 +78,25 @@ console.log("test");
 
 <div class="row">
 	<div class="col-lg-12">
-		<h1>Live Market Data</h1>
-<h2>Book ticker top</h2>
-<p>
-	{% for t in bookTicker_top %}
-	symbol:
-	{{t.0}}	bid ask diff as percentage of ask:	
-	{{t.2|floatformat:20|intcomma}} bid ask difference:
-	{{t.1}}
-<br>
-	{% endfor %}
-</p>
-<h2>Buy and Ask</h2>
-<p>
-	{% for bt in bookTicker %}
-	{{ bt }} <br>
-	{% endfor %}
-</p>
+<a href="/trades">->trades</a><br>
+<a href="/invest">->24 hour</a>
 
+
+{% if number_of_large_trades %}
 <h2>large trades</h2>
 <p>
 	number of large trades: {{number_of_large_trades}} <br>
 	{% for l in large_trades %}
 		<br>
 		{{l}}
+
 	{% endfor %}
 </p>
+{% else %}
 
-<h2>all trades</h2>
-	
-		{{trades}}
-
-	</div>
-</div>
 
 
 <h1>Market 24 Hour Data</h1>
-<h2> highest spread (in its category) : {{highest_spread}} </h2>
 <style>
 .symbol-card {
 border-style:dotted;
@@ -131,13 +113,7 @@ border-style:dotted;
 		diff = {{trading_pair.priceChangePercent}} <br>
 	</div> <! -- Trading pair row -->
 	{% endfor %}
-<div class="col-lg-12">
-	<hr>
-	<hr>
-	<hr>
-	<hr>
-	<hr>
-</div>
+{% endif %}
 
 		
 

@@ -7,12 +7,23 @@ class Book(models.Model):
 class Asset(models.Model):
 	name = models.CharField(max_length=201,null=True,blank=True)
 	price_url = models.CharField(max_length=400, null=True,blank=True)
+	price = models.FloatField(null=True, blank=True)
+
+
+class Trade(models.Model):
+	trade_id = models.FloatField(null=True, blank=True)
+	price = models.FloatField(null=True, blank=True)
+	qty = models.FloatField(null=True, blank=True)
+	quoteQty = models.FloatField(null=True, blank=True)
+	time = models.FloatField(null=True, blank=True)
+
 
 class EasternWebAccount(models.Model):
 	username = models.CharField(max_length=200,null=True)
 	password = models.CharField(max_length=200,null=True)
 	email = models.CharField(max_length=200,null=True)
-	join_date = models.DateField(auto_now=False, auto_now_add=True,blank=True,null=True)
+	join_date = models.DateField(auto_now=False, 
+		auto_now_add=True,blank=True,null=True)
 
 	
 class GC(models.Model):

@@ -82,10 +82,11 @@ console.log("test");
 <h2>Book ticker top</h2>
 <p>
 	{% for t in bookTicker_top %}
-	symbol
-	{{t}} <br>
-	bid ask diff
-	{{t}}
+	symbol:
+	{{t.0}}	bid ask diff as percentage of ask:	
+	{{t.2|floatformat:20|intcomma}} bid ask difference:
+	{{t.1}}
+<br>
 	{% endfor %}
 </p>
 <h2>Buy and Ask</h2>

@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.http import HttpResponse
+from django.http import HttpResponse
+from website.models import Trade, Asset
 import time
 import os
 from django.http import HttpResponse, HttpResponseRedirect
@@ -21,10 +24,28 @@ import requests
 import os.path
 import time
 import urllib.request
+from datetime import datetime
+import os.path
 def get_trade_json():
 	api_url = "https://api.binance.com/api/v3/trades?symbol=BTCUSDT"
 	trades = requests.get(api_url)
 	trades_json = json.loads(trades.text)
+
+	# Write data to disk #
+	#		     #
+	#                    #
+	now = datetime.now()	
+	timestamp = datetime.timestamp(now)
+	save_path = 'C:/Users/Admin/Desktop/tl'
+	file_name = str(timestamp) + "_tradelist.txt"
+	completeName = os.path.join(save_path, file_name)
+	f = open(completeName, 'w')
+	f.write(trades.text)
+	f.close()
+
+	
+	
+	# Returns json of the last 500 trades
 	return trades_json
 
 def get_binance_json(url):
@@ -35,6 +56,28 @@ def get_bookTicker():
 	resp = get_binance_json("https://api.binance.com/api/v3/ticker/bookTicker")
 	return resp 
 
+def get_price(symbol="BTCUSDT",write=False):
+	url = 'https://api.binance.com/api/v3/ticker/price'
+	url = url + '?symbol=' + symbol
+	resp = requests.get(url)
+	js = json.loads(resp.text)
+	if write:
+		new_asset = Asset(name=js['symbol'], price=js['price'])
+		confirm = new_asset.save()
+	return js
+
+def invest2(request):
+	try:
+		symbol = request.GET.get('symbol','LTCBTC')
+	except:
+		symbol = "LTCBTC"
+		pass
+
+	price_json = get_price(symbol,True)
+
+	return HttpResponse(price_json['symbol'] \
+	+ " " + price_json['price'])
+
 def get_symbol_summary():
 	api_url = 'https://api.binance.com/api/v3/ticker/24hr' 
 	pairs = requests.get(api_url)
@@ -42,10 +85,21 @@ def get_symbol_summary():
 	return parsed_json
 
 
-#	@__add_openLastDiff__
-#	add the attribute openLastDiff which is the difference
-#	between the assets most recent traded price and its opening
-#	ticker price
+def write_trades_to_db(js):
+	
+	for trade in js:
+
+		new_trade = Trade(trade_id = trade['id'], 
+		price = trade['price'], 
+		qty = trade['qty'], 
+		quoteQty = trade['quoteQty'], 
+		time = trade['time'])
+		try:
+			x = new_trade.save()
+		except:
+			print("Error saving trade")
+
+	return
 
 
 def invest(request):
@@ -60,8 +114,9 @@ def invest(request):
 		s = float(t['askPrice']) - float(t['bidPrice'])
 		if s>0:
 			x = (s/float(t['askPrice'])) * 100
-			if (x>0.1):
-				context['bookTicker_top'].append({t['symbol'],s,x})
+			if (x>1):
+				z = t['symbol']
+				context['bookTicker_top'].append([z,s,x])
 		
 	
 
@@ -71,6 +126,7 @@ def invest(request):
 
 	trades_json = get_trade_json()
 	context['trades'] = trades_json 
+	write_trades_to_db(trades_json)
 	context['large_trades'] = []
 
 	for trade in context['trades']:

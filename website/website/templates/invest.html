@@ -7,6 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
+
   <title>EasternWeb</title>
 
   <!-- Bootstrap core CSS -->
@@ -93,6 +94,53 @@ console.log("test");
 	{% endfor %}
 </p>
 {% else %}
+
+
+<h1>Current Live Prices (BINANCE)</h1>
+
+<div class="row">
+	<div class="col-lg-12">
+		<iframe src="http://localhost:8000/get-last-price?symbol=THETAUSDT" frameborder="0"></iframe>
+	</div>
+
+	<div class="col-lg-4">$ETH</div>
+	<div class="col-lg-4">$BTC</div>
+	<div class="col-lg-4">$XRP</div>
+	<div class="col-lg-4">$ADA</div>
+	<div class="col-lg-4">$LTC</div>
+	<div class="col-lg-4">$XTZ</div>
+	<div class="col-lg-4">$OMG</div>
+	<div class="col-lg-4">$EOS</div>
+	<div class="col-lg-4">$XLM</div>
+	<div class="col-lg-4">$BAT</div>
+	<div class="col-lg-4">$MKR</div>
+	<div class="col-lg-4">$SNX</div>
+	<div class="col-lg-4">$DGB</div>
+	<div class="col-lg-4">$DAI</div>
+	<div class="col-lg-4">$ICX</div>
+	<div class="col-lg-4">$SC</div>
+	<div class="col-lg-4">$THETA</div>
+	
+{% comment %}
+	<div class="col-lg-4">{{$ETH}}</div>
+	<div class="col-lg-4">{{$BTC}}</div>
+	<div class="col-lg-4">{{$XRP}}</div>
+	<div class="col-lg-4">{{$ADA}}</div>
+	<div class="col-lg-4">{{$LTC}}</div>
+	<div class="col-lg-4">{{$XTZ}}</div>
+	<div class="col-lg-4">{{$OMG}}</div>
+	<div class="col-lg-4">{{$EOS}}</div>
+	<div class="col-lg-4">{{$XLM}}</div>
+	<div class="col-lg-4">{{$BAT}}</div>
+	<div class="col-lg-4">{{$MKR}}</div>
+	<div class="col-lg-4">{{$SNX}}</div>
+	<div class="col-lg-4">{{$DGB}}</div>
+	<div class="col-lg-4">{{$DAI}}</div>
+	<div class="col-lg-4">{{$ICX}}</div>
+	<div class="col-lg-4">{{$SC}}</div>
+	<div class="col-lg-4">{{$THETA}}</div>
+{% endcomment %}
+</div>
 
 
 

@@ -25,9 +25,9 @@ def get_binance_json(url):
 	resp = requests.get(url)
 	return json.loads(resp.text)
 
+#########################################################################
 
-
-def get_last_price(request):
+def get_last_price(request,write=True):
 	''' Returns an HttpResponse, writes the price data to db '''
 	''' looks for "symbol" get parameter, defaults to LTCBTC '''
 	try:
@@ -44,8 +44,7 @@ def get_last_price(request):
 		new_asset = Asset(name=js['symbol'], price=js['price'])
 		confirm = new_asset.save()
 
-	return HttpResponse(price_json['symbol'] \
-	+ " " + price_json['price'])
+	return HttpResponse(new_asset.price)
 
 
 
@@ -72,10 +71,13 @@ def write_trades_to_db(js):
 ### Url Hooks ##################
 ################################
 
+
+
 def trades(request):
 	
 	context = {}
-	trades_json = get_binance_json("https://api.binance.com/api/v3/trades?symbol=BTCUSDT")
+	url = "https://api.binance.com/api/v3/trades?symbol=BTCUSDT"
+	trades_json = get_binance_json(url)
 	success = write_trades_to_db(trades_json)
 	context['large_trades'] = []
 
@@ -88,15 +90,19 @@ def trades(request):
 	return render(request, 'invest.html', context)
 
 def invest(request):
+
+
+
+	
 	context = {}
-	pair_listings = get_binance_json("https://api.binance.com/api/v3/ticker/24hr")
+	url = "https://api.binance.com/api/v3/ticker/24hr"
+	pair_listings = get_binance_json(url)
 		
 	
 
 	for pair in pair_listings:
 		pair['priceChangePercent'] = float(pair['priceChangePercent'])
 	context['pair_listings'] = pair_listings
-
 	return render(request, 'invest.html', context)
 
 
@@ -131,3 +137,17 @@ def account(request):
 	context = { 'data' : 12345 }
 	return render(request, 'account.html', context)
 
+
+
+#===============
+#================
+# ML SECTION
+#===============
+#================
+
+
+def insights(request):
+	trades = Trade.objects.all()
+	context = {'trades': trades}
+	
+	return render(request, 'insight.html', context)

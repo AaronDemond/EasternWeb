@@ -61,18 +61,7 @@
   src="https://code.jquery.com/jquery-3.5.1.min.js"
   integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
   crossorigin="anonymous"></script>
-<script>
-var $rows = $('#div');
-$('#search').keyup(function() {
-console.log("test");
-    var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-    
-    $rows.show().filter(function() {
-        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
-        return !~text.indexOf(val);
-    }).hide();
-});
-</script>
+
 
   <!-- Page Content -->
 {% load humanize %}
@@ -96,53 +85,29 @@ console.log("test");
 {% else %}
 
 
+
 <h1>Current Live Prices (BINANCE)</h1>
-
 <div class="row">
-	<div class="col-lg-12">
-		<iframe src="http://localhost:8000/get-last-price?symbol=THETAUSDT" frameborder="0"></iframe>
-	</div>
+<div class="col-sm-12">
+	<input autocomplete="off" type="text" id="search">
+<button type="button" class="btn btn-dark" id="filter-btn">Filter</button>
+<hr>
 
-	<div class="col-lg-4">$ETH</div>
-	<div class="col-lg-4">$BTC</div>
-	<div class="col-lg-4">$XRP</div>
-	<div class="col-lg-4">$ADA</div>
-	<div class="col-lg-4">$LTC</div>
-	<div class="col-lg-4">$XTZ</div>
-	<div class="col-lg-4">$OMG</div>
-	<div class="col-lg-4">$EOS</div>
-	<div class="col-lg-4">$XLM</div>
-	<div class="col-lg-4">$BAT</div>
-	<div class="col-lg-4">$MKR</div>
-	<div class="col-lg-4">$SNX</div>
-	<div class="col-lg-4">$DGB</div>
-	<div class="col-lg-4">$DAI</div>
-	<div class="col-lg-4">$ICX</div>
-	<div class="col-lg-4">$SC</div>
-	<div class="col-lg-4">$THETA</div>
-	
-{% comment %}
-	<div class="col-lg-4">{{$ETH}}</div>
-	<div class="col-lg-4">{{$BTC}}</div>
-	<div class="col-lg-4">{{$XRP}}</div>
-	<div class="col-lg-4">{{$ADA}}</div>
-	<div class="col-lg-4">{{$LTC}}</div>
-	<div class="col-lg-4">{{$XTZ}}</div>
-	<div class="col-lg-4">{{$OMG}}</div>
-	<div class="col-lg-4">{{$EOS}}</div>
-	<div class="col-lg-4">{{$XLM}}</div>
-	<div class="col-lg-4">{{$BAT}}</div>
-	<div class="col-lg-4">{{$MKR}}</div>
-	<div class="col-lg-4">{{$SNX}}</div>
-	<div class="col-lg-4">{{$DGB}}</div>
-	<div class="col-lg-4">{{$DAI}}</div>
-	<div class="col-lg-4">{{$ICX}}</div>
-	<div class="col-lg-4">{{$SC}}</div>
-	<div class="col-lg-4">{{$THETA}}</div>
-{% endcomment %}
+</div>
 </div>
 
+<div class="row">
 
+		{% for pair in snapshot %}
+	<div class="col-sm-1 symbol-container" id="{{pair.symbol}}">
+		<div class="symbol">{{pair.symbol}}</div> {{pair.price}}	
+
+
+	</div>
+		{% endfor %}
+</div>
+
+SNTETH
 
 <h1>Market 24 Hour Data</h1>
 <style>
@@ -158,7 +123,9 @@ border-style:dotted;
 		open = {{trading_pair.openPrice}} <br>
 		last = {{trading_pair.lastPrice}} <br>
 		high = {{trading_pair.highPrice}} <br>
-		diff = {{trading_pair.priceChangePercent}} <br>
+		low = {{trading_pair.lowPrice}} <br>
+		Price Change = {{trading_pair.priceChange}} <br>
+		Price Percentage Change = {{trading_pair.priceChangePercent}} <br>
 	</div> <! -- Trading pair row -->
 	{% endfor %}
 {% endif %}
@@ -168,23 +135,6 @@ border-style:dotted;
 
 {{xlm.0}}
 
-
-
-
-
-
-	
-
-
-
-
-<!--
-  <div class="form-check">
-    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-     <label class="form-check-label" for="exampleCheck1">Check me out</label> 
-  </div>
--->
-
 </div>
 
 </div> <!-- div row end -->
@@ -193,21 +143,38 @@ border-style:dotted;
 
 </div>
 <hr/>
-<!---
-        <ul class="list-unstyled">
-          <li>Bootstrap 4.5.0</li>
-          <li>jQuery 3.5.1</li>
-        </ul>
--->
       </div>
     </div>
   </div>
 
   <!-- Bootstrap core JavaScript -->
   <script src='{% static "/jquery/jquery.slim.min.js" %}'></script>
+  <script src='{% static "/jquery/jquery.js" %}'></script>
   <script src='{% static "/bootstrap/js/bootstrap.bundle.min.js" %}'></script>
   <link href='{% static "/bootstrap/css/bootstrap.min.css" %}' rel="stylesheet">
+<style>
+.symbol-container {
+background-color: lightgrey;
+}
+</style>
+<script>
+$("#filter-btn").click(function(){
+	$(".symbol-container").css("background-color", "grey");
+	search_q = ($("#search").val()).toUpperCase();
+	div_id = "#"+search_q;
+	$ ( ".symbol-container[id*='" + search_q + "']" ).css("background-color", "darkorange");
+	
+$.ajax({
+  url: "/i",
+  success: (function(data) {
+	console.log(data);
+  }) 
+});
 
+
+}); 
+</script>
 </body>
 
 </html>
+

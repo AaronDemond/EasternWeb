@@ -103,6 +103,12 @@ def invest(request):
 	for pair in pair_listings:
 		pair['priceChangePercent'] = float(pair['priceChangePercent'])
 	context['pair_listings'] = pair_listings
+
+	url2 = "https://api.binance.com/api/v3/ticker/price"
+	snapshot = get_binance_json(url2)
+	context['snapshot'] = snapshot
+		
+
 	return render(request, 'invest.html', context)
 
 

@@ -18,6 +18,26 @@ class Trade(models.Model):
 	time = models.FloatField(null=True, blank=True)
 
 
+class Signal(models.Model):
+	name  = models.CharField(max_length=200,null=True)
+	signif  = models.CharField(max_length=200,null=True)
+	action_url  = models.CharField(max_length=200,null=True)
+	source  = models.CharField(max_length=200,null=True)
+	data  = models.CharField(max_length=200,null=True)
+	symbol = models.CharField(max_length=200,null=True)
+	price = models.CharField(max_length=200,null=True)
+	qty = models.CharField(max_length=200,null=True)
+	timestamp = models.CharField(max_length=200,null=True)
+
+
+
+#try to influence other bots and profit off it
+
+
+
+
+
+
 class EasternWebAccount(models.Model):
 	username = models.CharField(max_length=200,null=True)
 	password = models.CharField(max_length=200,null=True)

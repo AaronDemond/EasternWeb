@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
-from website.models import Trade, Asset
+from website.models import Trade, Asset, Trade, Signal
 
 import time
 import os
@@ -13,11 +13,12 @@ import json
 import requests
 import urllib.request
 # ------------------------------------------------------------ #
-
-
-
-### API HELPERS ################
-################################
+#
+#
+#
+#
+### API HELPERS ########################################################
+########################################################################
 
 
 def get_binance_json(url):
@@ -25,7 +26,22 @@ def get_binance_json(url):
 	resp = requests.get(url)
 	return json.loads(resp.text)
 
-#########################################################################
+def write_trades_to_db(js):
+	''' Accepts js (JSON trade data) and writes to db '''	
+	for trade in js:
+		new_trade = Trade(trade_id = trade['id'], 
+		price = trade['price'], 
+		qty = trade['qty'], 
+		quoteQty = trade['quoteQty'], 
+		time = trade['time'])
+		try:
+			x = new_trade.save()
+		except:
+			print("Error saving trade")
+	return True
+
+### URL HOOKS ##########################################################
+########################################################################
 
 def get_last_price(request,write=True):
 	''' Returns an HttpResponse, writes the price data to db '''
@@ -46,73 +62,56 @@ def get_last_price(request,write=True):
 
 	return HttpResponse(new_asset.price)
 
-
-
-def write_trades_to_db(js):
-	''' Accepts js (JSON trade data) and writes to db '''
-	
-	for trade in js:
-
-		new_trade = Trade(trade_id = trade['id'], 
-		price = trade['price'], 
-		qty = trade['qty'], 
-		quoteQty = trade['quoteQty'], 
-		time = trade['time'])
-		try:
-			x = new_trade.save()
-		except:
-			print("Error saving trade")
-
-	return True
-
-
-
-
-### Url Hooks ##################
-################################
-
-
-
 def trades(request):
-	
+
+	# init vars
+	# for now defaults to BTCUSDT
 	context = {}
+	context['large_trades'] = []
 	url = "https://api.binance.com/api/v3/trades?symbol=BTCUSDT"
+
+	# get json trade data & write to db
 	trades_json = get_binance_json(url)
 	success = write_trades_to_db(trades_json)
-	context['large_trades'] = []
 
+	# Fill context & create & write a signal (if needed)
 	for trade in trades_json:
-		if float(trade['qty']) > 0.5:
+		if (float(trade['qty']) > 1):
 			context['large_trades'].append(trade)
+			t = datetime.datetime.now()
+			s = Signal(price=trade['price'], 
+					qty=trade['qty'],
+						timestamp=t)
+			s.save()
 	context['number_of_large_trades'] = len(context['large_trades'])
-		
-	
+
+	# Return HTML
 	return render(request, 'invest.html', context)
 
-def invest(request):
+def invest(request):	
 
-
-
-	
+	# init vars
 	context = {}
 	url = "https://api.binance.com/api/v3/ticker/24hr"
-	pair_listings = get_binance_json(url)
-		
-	
+	url2 = "https://api.binance.com/api/v3/ticker/price"
 
+	# Get 24 hour pair listing data
+	pair_listings = get_binance_json(url)
+
+	# Get current prices		
+	snapshot = get_binance_json(url2)
+	
+	# Fill context
 	for pair in pair_listings:
 		pair['priceChangePercent'] = float(pair['priceChangePercent'])
 	context['pair_listings'] = pair_listings
-
-	url2 = "https://api.binance.com/api/v3/ticker/price"
-	snapshot = get_binance_json(url2)
 	context['snapshot'] = snapshot
-		
 
+	# return HTML
 	return render(request, 'invest.html', context)
 
-
-
+# STATIC 
+# --------------------------------------------------------------------------------- #
 def index(request):
 	context = { 'data' : 12345 }
 	try:

@@ -1,8 +1,11 @@
 
 from django.contrib import admin
-from .models import GC, EasternWebAccount, Asset, assetpair0, Trade
+from .models import GC, EasternWebAccount, Asset, assetpair0, Trade, Signal
 
 class EasternWebAccountAdmin(admin.ModelAdmin):
+	pass
+
+class SignalAdmin(admin.ModelAdmin):
 	pass
 
 class AssetAdmin(admin.ModelAdmin):
@@ -19,6 +22,7 @@ class APAdmin(admin.ModelAdmin):
 	pass
 
 admin.site.register(GC, GCAdmin)
+admin.site.register(Signal, SignalAdmin)
 admin.site.register(Trade, TradeAdmin)
 admin.site.register(assetpair0, APAdmin)
 admin.site.register(EasternWebAccount, EasternWebAccountAdmin)

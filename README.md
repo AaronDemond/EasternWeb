@@ -1,8 +1,11 @@
-Source code for easternweb.ca (Not yet live - date pending)
+#### EasternWeb Source Code
 
-please link our website if you use any code, which you may do freely.
+Not yet live - date pending
+
+
+Please link this page if you use any code in your project ??
 
 ![EasternWeb](logo.png "EasternWeb")
-aaron@easternweb.ca
+
 
 

@@ -82,7 +82,7 @@ def trades(request):
 	context['large_trades'] = []
 
 	for trade in trades_json:
-		if float(trade['qty']) > 0.1:
+		if float(trade['qty']) > 0.5:
 			context['large_trades'].append(trade)
 	context['number_of_large_trades'] = len(context['large_trades'])
 		

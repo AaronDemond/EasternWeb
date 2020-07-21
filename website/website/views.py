@@ -129,7 +129,8 @@ def about(request):
 	return render(request, 'about.html', context)
 
 def shop(request):
-	context = { 'data' : 12345 }
+	t = datetime.today()
+	context = { 'data' : 12345, 't':t}
 
 	return render(request, 'shop.html', context)
 

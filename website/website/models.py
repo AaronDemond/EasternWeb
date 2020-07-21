@@ -29,6 +29,10 @@ class Signal(models.Model):
 	qty = models.CharField(max_length=200,null=True)
 	timestamp = models.CharField(max_length=200,null=True)
 
+	def __str__(self):
+		import datetime
+		s = str(self.qty) + " of of BTCUST "
+		return s
 
 
 #try to influence other bots and profit off it

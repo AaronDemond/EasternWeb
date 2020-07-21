@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -19,6 +19,8 @@ import urllib.request
 #
 ### API HELPERS ########################################################
 ########################################################################
+
+TRADE_QTY_THRESHOLD = 1
 
 
 def get_binance_json(url):
@@ -76,12 +78,12 @@ def trades(request):
 
 	# Fill context & create & write a signal (if needed)
 	for trade in trades_json:
-		if (float(trade['qty']) > 1):
+		if (float(trade['qty']) > TRADE_QTY_THRESHOLD):
 			context['large_trades'].append(trade)
 			t = datetime.datetime.now()
 			s = Signal(price=trade['price'], 
-					qty=trade['qty'],
-						timestamp=t)
+		       	 qty=trade['qty'], 
+			 timestamp=t)
 			s.save()
 	context['number_of_large_trades'] = len(context['large_trades'])
 

@@ -21,6 +21,10 @@ import urllib.request
 TRADE_QTY_THRESHOLD = 1
 
 
+
+
+
+
 def get_binance_json(url):
 	''' Returns parsed JSON from a binance URL endpoint '''
 	resp = requests.get(url)
@@ -60,6 +64,8 @@ def get_last_price(request,write=True):
 
 	return HttpResponse(new_asset.price)
 
+	
+
 def trades(request):
 
 	# init vars
@@ -78,8 +84,11 @@ def trades(request):
 			context['large_trades'].append(trade)
 			t = datetime.datetime.now()
 			s = Signal(price=trade['price'], 
-		       	 qty=trade['qty'], 
-			 timestamp=t)
+		       	 qty = trade['qty'], 
+			 timestamp=t,
+			 trade_id = trade['id'],
+			 symbol = trade['symbol'],
+			)
 			s.save()
 	context['number_of_large_trades'] = len(context['large_trades'])
 
@@ -151,8 +160,19 @@ def account(request):
 
 
 def insights(request):
-	trades = Trade.objects.all()
+	trades = Trade.objects.all().order_by("-id")[:50000]
 	context = {'trades': trades}
+
+	outp =""
+
+	hits=0
+	for t in trades:
+		if (float(t.qty)  > 5):
+			hits=hits+1
+
+	return HttpResponse(str(hits)+"")
+
+	return HttpResponse(trades[0].price+"\nl0l")
 	
 	return render(request, 'insight.html', context)
 

@@ -12,6 +12,7 @@ class Trade(models.Model):
 	qty = models.FloatField(null=True, blank=True)
 	quoteQty = models.FloatField(null=True, blank=True)
 	time = models.FloatField(null=True, blank=True)
+	isBuyerMaker = models.BooleanField(null=True, blank=True)
 
 class Signal(models.Model):
 	''' Market Signal Model Class

@@ -1,5 +1,2 @@
 Django
 Python3
-Bootstrap
-jquery
-sqlite

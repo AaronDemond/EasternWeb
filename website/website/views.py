@@ -17,9 +17,7 @@ import urllib.request
 #
 #
 #
-### API HELPERS ########################################################
-########################################################################
-
+### API HELPERS ##############################################
 TRADE_QTY_THRESHOLD = 1
 
 
@@ -42,9 +40,7 @@ def write_trades_to_db(js):
 			print("Error saving trade")
 	return True
 
-### URL HOOKS ##########################################################
-########################################################################
-
+### URL HOOKS ################################################
 def get_last_price(request,write=True):
 	''' Returns an HttpResponse, writes the price data to db '''
 	''' looks for "symbol" get parameter, defaults to LTCBTC '''
@@ -131,7 +127,7 @@ def about(request):
 	return render(request, 'about.html', context)
 
 def shop(request):
-	t = datetime.today()
+	t = datetime.datetime.now()
 	context = { 'data' : 12345, 't':t}
 
 	return render(request, 'shop.html', context)
@@ -159,3 +155,4 @@ def insights(request):
 	context = {'trades': trades}
 	
 	return render(request, 'insight.html', context)
+

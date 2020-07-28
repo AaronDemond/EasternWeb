@@ -86,8 +86,6 @@ def trades(request):
 			s = Signal(price=trade['price'], 
 		       	 qty = trade['qty'], 
 			 timestamp=t,
-			 trade_id = trade['id'],
-			 symbol = trade['symbol'],
 			)
 			s.save()
 	context['number_of_large_trades'] = len(context['large_trades'])

@@ -30,13 +30,13 @@ def get_binance_json(url):
 	resp = requests.get(url)
 	return json.loads(resp.text)
 
-def write_trades_to_db(js):
+def write_trades_to_db(js,symbol="BTCUSDT"):
 	''' Accepts js (JSON trade data) and writes to db '''	
 	for trade in js:
 		new_trade = Trade(trade_id = trade['id'], 
 		price = trade['price'], 
 		qty = trade['qty'], 
-		symbol = trade['symbol'],
+		symbol = symbol,
 		quoteQty = trade['quoteQty'], 
 		time = trade['time'])
 		try:
@@ -113,7 +113,7 @@ def trades(request):
 			s = Signal(price=trade['price'], 
 		       	 qty = trade['qty'], 
 			 timestamp=t,
-			 symbol=trade['symbol']
+			 symbol="BTCUSDT"
 			)
 			s.save()
 	context['number_of_large_trades'] = len(context['large_trades'])

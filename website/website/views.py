@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
-from website.models import Trade, Trade, Signal, HistoricalPrice
+from website.models import Trade, Trade, Signal, HistoricalPrice, Candle
 
 import time
 import os
@@ -145,4 +145,46 @@ def insights(request):
 			hits=hits+1
 
 	return HttpResponse("todo")
+
+
+def getCandleData(request):
+# returns json
+# ex: http://localhost:8000/get-candle-data?symbol=XRPUSDT 
+
+	symbol=request.GET.get('symbol', 'XRPUSDT')
+	st = 1594052883 
+	jsondata = get_binance_json('https:' +\
+'//api.binance.com/api/v3/klines?symbol=' + symbol +\
+'&interval=1h')#&startTime=' + str(st))
+	writeCandleDataset(jsondata,symbol)
+	return HttpResponse(jsondata)
+
+def writeCandleDataset(js,s):
+	for candleDataSet in js:
+		new_candle = Candle(
+		symbol=s,
+		open_time = candleDataSet[0],
+		open_price = candleDataSet[2],
+		high_price = candleDataSet[3],
+		low = candleDataSet[4],
+		close = candleDataSet[5],
+		volume = candleDataSet[6],
+		close_time = candleDataSet[7]
+		)
+		conf=new_candle.save()
+	
+		
+
+def generatePriceMovingSignal(symbol):
+	hpl = HistoricalPrice.objects.all().order_by("-id")[:1000]
+	hplt = []
+	t=5
+	for x in hpl:
+		if x.symbol==symbol:
+			hplt.append(x)
+	return(hplt)
+			
+
+
+
 

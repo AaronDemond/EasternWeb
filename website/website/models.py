@@ -5,6 +5,27 @@ import datetime
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class HistoricalPrice(models.Model):
 	''' Record of a crypto market price '''
 
@@ -30,6 +51,11 @@ class Candle(models.Model):
 	taker_buy_base_asset_volume = models.CharField(max_length=200,null=True, blank =True)
 	taker_buy_quote_asset_volume = models.CharField(max_length=200,null=True, blank =True)
 	ignore = models.CharField(max_length=200,null=True, blank =True)
+	symbol = models.CharField(max_length=200,null=True, blank =True)
+
+
+	def __str__(self):
+		return(self.symbol)
 
 class HistoricalBound(models.Model):
 	pass

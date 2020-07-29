@@ -8,6 +8,7 @@ from .views import account as account_page
 from .views import invest as invest_page
 from .views import get_last_price 
 from .views import insights
+from .views import getCandleData
 from .views import trades  as trades_page
 
 urlpatterns = [
@@ -22,6 +23,6 @@ urlpatterns = [
     path('get-last-price', get_last_price, name='get_last_price'),
     path('contact', contact_page, name='contact'),
     path('account', account_page, name='account'),
-    path('email_signup', home_page, name='index')
-
+    path('email_signup', home_page, name='index'),
+    path('get-candle-data', getCandleData)
 ]

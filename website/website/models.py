@@ -9,8 +9,12 @@ class HistoricalPrice(models.Model):
 	''' Record of the given most recent market price '''
 
 	price = models.FloatField(null=True, blank=True)
-	time = models.FloatField(null=True, blank=True)
+	time = models.CharField(max_length=1000,null=True, blank=True)
+	symbol = models.CharField(max_length=1000,null=True, blank=True)
 	source = models.CharField(max_length=1000,null=True, blank=True)
+
+	def __str__(self):
+		return (self.symbol + " " + str(self.price))
 
 ########
 
@@ -35,7 +39,6 @@ class Trade(models.Model):
 	quoteQty = models.FloatField(null=True, blank=True)
 	time = models.FloatField(null=True, blank=True)
 	isBuyerMaker = models.BooleanField(null=True, blank=True)
-########
 
 
 class Signal(models.Model):
@@ -56,6 +59,7 @@ class Signal(models.Model):
 	price = models.CharField(max_length=200,null=True)
 	qty = models.CharField(max_length=200,null=True)
 	timestamp = models.CharField(max_length=200,null=True)
+	price_change = models.CharField(max_length=200,null=True)
 
 	# Defines the text str to return on model.name
 	def __str__(self):

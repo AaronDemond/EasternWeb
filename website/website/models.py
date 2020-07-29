@@ -37,6 +37,7 @@ class Trade(models.Model):
 	price = models.FloatField(null=True, blank=True)
 	qty = models.FloatField(null=True, blank=True)
 	quoteQty = models.FloatField(null=True, blank=True)
+	symbol = models.CharField(max_length=200,null=True, blank =True)
 	time = models.FloatField(null=True, blank=True)
 	isBuyerMaker = models.BooleanField(null=True, blank=True)
 

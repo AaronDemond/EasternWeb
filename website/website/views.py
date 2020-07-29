@@ -36,6 +36,7 @@ def write_trades_to_db(js):
 		new_trade = Trade(trade_id = trade['id'], 
 		price = trade['price'], 
 		qty = trade['qty'], 
+		symbol = trade['symbol'],
 		quoteQty = trade['quoteQty'], 
 		time = trade['time'])
 		try:
@@ -112,6 +113,7 @@ def trades(request):
 			s = Signal(price=trade['price'], 
 		       	 qty = trade['qty'], 
 			 timestamp=t,
+			 symbol=trade['symbol']
 			)
 			s.save()
 	context['number_of_large_trades'] = len(context['large_trades'])

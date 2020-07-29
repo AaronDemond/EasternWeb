@@ -47,8 +47,8 @@ def write_trades_to_db(js,symbol="BTCUSDT"):
 
 ### URL HOOKS ################################################
 def get_last_price(request):
-	''' Returns an HttpResponse, writes the price data to db '''
-	''' looks for "symbol" get parameter, defaults to LTCBTC '''
+	''' Returns an HttpResponse, writes the 
+	price data to db '''
 	try:
 		symbol = request.GET.get('symbol','LTCBTC')
 	except:
@@ -67,15 +67,11 @@ def get_last_price(request):
 			source="Binance",
 			)
 	confirm = new_asset.save()
-
 	return HttpResponse(new_asset.price)
 
-	
-
 def trades(request):
+	''' for now defaults to BTCUSDT '''
 
-	# init vars
-	# for now defaults to BTCUSDT
 	context = {}
 	context['large_trades'] = []
 	url = "https://api.binance.com/api/v3/trades?symbol=BTCUSDT"
@@ -96,13 +92,10 @@ def trades(request):
 			)
 			s.save()
 	context['number_of_large_trades'] = len(context['large_trades'])
-
-	# Return HTML
 	return render(request, 'invest.html', context)
 
 def invest(request):	
-
-	# init vars
+	'''Returns general market info'''
 	context = {}
 	url = "https://api.binance.com/api/v3/ticker/24hr"
 	url2 = "https://api.binance.com/api/v3/ticker/price"
@@ -113,17 +106,14 @@ def invest(request):
 	# Get current prices		
 	snapshot = get_binance_json(url2)
 	
-	# Fill context
+	# Fill context and return
 	for pair in pair_listings:
 		pair['priceChangePercent'] = float(pair['priceChangePercent'])
 	context['pair_listings'] = pair_listings
 	context['snapshot'] = snapshot
 
-	# return HTML
 	return render(request, 'invest.html', context)
 
-# STATIC 
-# --------------------------------------------------------------------------------- #
 def index(request):
 	context = { 'data' : 12345 }
 	try:
@@ -134,16 +124,13 @@ def index(request):
 		value = -1
 	return render(request, 'index.html', context)
 
-
 def about(request):
 	context = { 'data' : 12345 }
-
 	return render(request, 'about.html', context)
 
 def shop(request):
 	t = datetime.datetime.now()
 	context = { 'data' : 12345, 't':t}
-
 	return render(request, 'shop.html', context)
 
 
@@ -155,29 +142,15 @@ def account(request):
 	context = { 'data' : 12345 }
 	return render(request, 'account.html', context)
 
-
-
-#===============
-#================
-# ML SECTION
-#===============
-#================
-
-
 def insights(request):
 	trades = Trade.objects.all().order_by("-id")[:50000]
 	context = {'trades': trades}
-
 	outp =""
-
 	hits=0
+
 	for t in trades:
 		if (float(t.qty)  > 5):
 			hits=hits+1
 
-	return HttpResponse(str(hits)+"")
-
-	return HttpResponse(trades[0].price+"\nl0l")
-	
-	return render(request, 'insight.html', context)
+	return HttpResponse("todo")
 

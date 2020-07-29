@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Use this script to manage the Django shell
 """Django's command-line utility for administrative tasks."""
 import os
 import sys

@@ -6,7 +6,7 @@ import datetime
 
 
 class HistoricalPrice(models.Model):
-	''' Record of the given most recent market price '''
+	''' Record of a crypto market price '''
 
 	price = models.FloatField(null=True, blank=True)
 	time = models.CharField(max_length=1000,null=True, blank=True)
@@ -16,19 +16,11 @@ class HistoricalPrice(models.Model):
 	def __str__(self):
 		return (self.symbol + " " + str(self.price))
 
-########
-
-class LocalHighHistorical(models.Model):
-	pass
-
 class HistoricalBound(models.Model):
 	pass
 
 class HistoricalTrend(models.Model):
 	pass
-
-
-
 
 class Trade(models.Model):
 	''' Record of A trade executed on Binance.com '''
@@ -44,12 +36,8 @@ class Trade(models.Model):
 
 class Signal(models.Model):
 	''' Market Signal Model Class
-	-------------------------------------------------------
-	Signals are created when interesting things happen
-	in the market. Such as, a large trade going through.
-	These signals should be attached to a delivery 
-	pipeline where account owenrs can automatically
-	receive them.  '''
+	-----------------------------
+	'''
 
 	name  = models.CharField(max_length=200,null=True)
 	signif  = models.CharField(max_length=200,null=True)

@@ -67,12 +67,6 @@ class Signal(models.Model):
 		s = str(self.qty) + " of BTCUST @ "+ self.price
 		return s
 
-class Asset(models.Model):
-	name = models.CharField(max_length=201,
-		null=True,blank=True)
-	price_url = models.CharField(max_length=400,
-		 null=True,blank=True)
-	price = models.FloatField(null=True, blank=True)
 
 
 

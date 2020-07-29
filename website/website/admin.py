@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from .models import  Asset,  Trade, Signal, HistoricalTrend, HistoricalPrice
+from .models import  Trade, Signal, HistoricalTrend, HistoricalPrice
 
 
 
@@ -14,8 +14,6 @@ class HistoricalTrendAdmin(admin.ModelAdmin):
 class SignalAdmin(admin.ModelAdmin):
 	pass
 
-class AssetAdmin(admin.ModelAdmin):
-	pass
 
 
 class GCAdmin(admin.ModelAdmin):
@@ -31,4 +29,3 @@ admin.site.register(HistoricalPrice, HistoricalPriceAdmin)
 admin.site.register(HistoricalTrend, HistoricalTrendAdmin)
 admin.site.register(Signal, SignalAdmin)
 admin.site.register(Trade, TradeAdmin)
-admin.site.register(Asset, AssetAdmin)

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
-from website.models import Trade, Asset, Trade, Signal, HistoricalPrice
+from website.models import Trade, Trade, Signal, HistoricalPrice
 
 import time
 import os
@@ -67,27 +67,6 @@ def get_last_price(request):
 			source="Binance",
 			)
 	confirm = new_asset.save()
-
-	recentPrices = HistoricalPrice.objects.all().order_by("-id")[:2]
-	counter = 0
-	for p in recentPrices:
-		#if the difference between the last traded price and 
-		#the most recent is above DIFFERENCE_THRESHOLD 
-		#spawn a signal
-		try:
-			diff = (float(p.price) - float(recentPrices[counter+1].price))
-			print(diff)	
-			if (diff > 1):
-				s = Signal(price=p.price, 
-				 symbol=symbol,
-				 price_change = diff,
-				 timestamp=t,
-				)
-				s.save()
-		except:
-			pass
-		counter = counter +1
-
 
 	return HttpResponse(new_asset.price)
 

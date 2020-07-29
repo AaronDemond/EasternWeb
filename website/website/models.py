@@ -39,10 +39,12 @@ class HistoricalPrice(models.Model):
 		return (self.symbol + " " + str(self.price))
 
 class Candle(models.Model):
+
 	open_time = models.CharField(max_length=200,null=True, blank =True)
 	open_price = models.CharField(max_length=200,null=True, blank =True)
 	high_price = models.CharField(max_length=200,null=True, blank =True)
 	low = models.CharField(max_length=200,null=True, blank =True)
+	source = models.CharField(max_length=1000,null=True, blank=True)
 	close = models.CharField(max_length=200,null=True, blank =True)
 	volume = models.CharField(max_length=200,null=True, blank =True)
 	close_time = models.CharField(max_length=200,null=True, blank =True)
@@ -71,6 +73,7 @@ class Trade(models.Model):
 	qty = models.FloatField(null=True, blank=True)
 	quoteQty = models.FloatField(null=True, blank=True)
 	symbol = models.CharField(max_length=200,null=True, blank =True)
+	source = models.CharField(max_length=1000,null=True, blank=True)
 	time = models.FloatField(null=True, blank=True)
 	isBuyerMaker = models.BooleanField(null=True, blank=True)
 

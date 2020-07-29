@@ -152,24 +152,33 @@ def getCandleData(request):
 # ex: http://localhost:8000/get-candle-data?symbol=XRPUSDT 
 
 	symbol=request.GET.get('symbol', 'XRPUSDT')
+	interval=request.GET.get('interval', '30m')
 	st = 1594052883 
 	jsondata = get_binance_json('https:' +\
 '//api.binance.com/api/v3/klines?symbol=' + symbol +\
-'&interval=1h')#&startTime=' + str(st))
-	writeCandleDataset(jsondata,symbol)
+'&interval='+interval+'&limit=7')#&startTime=' + str(st))
+	writeCandleDataset(jsondata,symbol,'Binance')
 	return HttpResponse(jsondata)
 
-def writeCandleDataset(js,s):
+def writeCandleDataset(js,s,source_str):
 	for candleDataSet in js:
 		new_candle = Candle(
+		###
 		symbol=s,
+		source=source_str,
+		###
 		open_time = candleDataSet[0],
-		open_price = candleDataSet[2],
-		high_price = candleDataSet[3],
-		low = candleDataSet[4],
-		close = candleDataSet[5],
-		volume = candleDataSet[6],
-		close_time = candleDataSet[7]
+		open_price = candleDataSet[1],
+		high_price = candleDataSet[2],
+		low = candleDataSet[3],
+		close = candleDataSet[4],
+		volume = candleDataSet[5],
+		close_time = candleDataSet[6],
+		quote_asset_volume = candleDataSet[7],
+		number_of_trades = candleDataSet[8],
+		taker_buy_base_asset_volume = candleDataSet[9],
+		taker_buy_quote_asset_volume = candleDataSet[10],
+		ignore = candleDataSet[11],
 		)
 		conf=new_candle.save()
 	

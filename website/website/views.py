@@ -12,17 +12,8 @@ import wget
 import json
 import requests
 import urllib.request
-# ------------------------------------------------------------ #
-#
-#
-#
-#
-### API HELPERS ##############################################
+
 TRADE_QTY_THRESHOLD = 1
-
-
-
-
 
 
 def get_binance_json(url):
@@ -45,7 +36,6 @@ def write_trades_to_db(js,symbol="BTCUSDT"):
 			print("Error saving trade")
 	return True
 
-### URL HOOKS ################################################
 def get_last_price(request):
 	''' Returns an HttpResponse, writes the 
 	price data to db '''
@@ -74,13 +64,15 @@ def trades(request):
 
 	context = {}
 	context['large_trades'] = []
-	url = "https://api.binance.com/api/v3/trades?symbol=BTCUSDT"
+	url = 'https://api.binance.com'\
+	'/api/v3/trades?symbol=BTCUSDT'
 
 	# get json trade data & write to db
 	trades_json = get_binance_json(url)
 	success = write_trades_to_db(trades_json)
 
-	# Fill context & create & write a signal (if needed)
+	# Fill context & create & write a 
+	# signal (if needed)
 	for trade in trades_json:
 		if (float(trade['qty']) > TRADE_QTY_THRESHOLD):
 			context['large_trades'].append(trade)

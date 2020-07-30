@@ -77,6 +77,12 @@ class Trade(models.Model):
 	time = models.FloatField(null=True, blank=True)
 	isBuyerMaker = models.BooleanField(null=True, blank=True)
 
+	def __str__(self):
+		if self.symbol:
+			return(self.symbol)
+		else:
+			return("NO SYMBOL GIVEN likely btc")
+
 
 class Signal(models.Model):
 	''' Market Signal Model Class
@@ -96,8 +102,12 @@ class Signal(models.Model):
 
 	# Defines the text str to return on model.name
 	def __str__(self):
-		s = str(self.qty) + " of BTCUST @ "+ self.price
-		return s
+		if self.qty:
+			return("buy of " + self.qty + " " +self.symbol + " at " + self.price)
+		if not self.data:
+			return(self.symbol)
+		else:
+			return(self.symbol + " " + self.data)
 
 
 

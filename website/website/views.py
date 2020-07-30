@@ -13,7 +13,8 @@ import json
 import requests
 import urllib.request
 
-TRADE_QTY_THRESHOLD = 1
+TRADE_QTY_THRESHOLD_BTC = 1
+TRADE_QTY_THRESHOLD_XRP = 26000
 
 
 def get_binance_json(url):
@@ -50,14 +51,35 @@ def get_last_price(request):
 	resp = requests.get(url)
 	js = json.loads(resp.text)
 	t = datetime.datetime.now()
-	new_asset = HistoricalPrice(
+	historical_price = HistoricalPrice(
 			symbol=js['symbol'], 
 			price=js['price'],
 			time = t,
 			source="Binance",
 			)
-	confirm = new_asset.save()
-	return HttpResponse(new_asset.price)
+	confirm = historical_price.save()
+	spawn_alert(historical_price,symbol)
+	return HttpResponse(historical_price.price)
+
+def spawn_alert(historical_price,symbol):
+	hpl = HistoricalPrice.objects.all().order_by("-id")[:10]
+	hpl1 = []
+	for x in hpl:
+		if x.symbol==symbol:
+			hpl1.append(x)
+	counter=0
+	for x in hpl1:
+		if (((float(hpl1[0].price - x.price)/x.price)*100)>0.5):
+			s = Signal(price=x.price, 
+			 timestamp=datetime.datetime.now(),
+			 data = "current price:" + str(str(hpl1[0].price) + " previous: "+str(x.price)),
+			 symbol=symbol,
+			 price_change= ((float(hpl1[0].price - x.price)/x.price)*100),
+			)
+			s.save()
+			print("alert spawned")
+
+
 
 def trades(request):
 	''' for now defaults to BTCUSDT '''
@@ -74,7 +96,7 @@ def trades(request):
 	# Fill context & create & write a 
 	# signal (if needed)
 	for trade in trades_json:
-		if (float(trade['qty']) > TRADE_QTY_THRESHOLD):
+		if (float(trade['qty']) > TRADE_QTY_THRESHOLD_BTC):
 			context['large_trades'].append(trade)
 			t = datetime.datetime.now()
 			s = Signal(price=trade['price'], 
@@ -85,7 +107,32 @@ def trades(request):
 			s.save()
 	context['number_of_large_trades'] = len(context['large_trades'])
 	return render(request, 'invest.html', context)
+def trades2(request):
+	''' for now defaults to BTCUSDT '''
 
+	context = {}
+	context['large_trades'] = []
+	url = 'https://api.binance.com'\
+	'/api/v3/trades?symbol=XRPUSDT'
+
+	# get json trade data & write to db
+	trades_json = get_binance_json(url)
+	success = write_trades_to_db(trades_json)
+
+	# Fill context & create & write a 
+	# signal (if needed)
+	for trade in trades_json:
+		if (float(trade['qty']) > TRADE_QTY_THRESHOLD_XRP):
+			context['large_trades'].append(trade)
+			t = datetime.datetime.now()
+			s = Signal(price=trade['price'], 
+		       	 qty = trade['qty'], 
+			 timestamp=t,
+			 symbol="XRPUSDT"
+			)
+			s.save()
+	context['number_of_large_trades'] = len(context['large_trades'])
+	return render(request, 'invest.html', context)
 def invest(request):	
 	'''Returns general market info'''
 	context = {}
@@ -183,17 +230,6 @@ def writeCandleDataset(js,s,source_str):
 		conf=new_candle.save()
 	
 		
-
-def generatePriceMovingSignal(symbol):
-	hpl = HistoricalPrice.objects.all().order_by("-id")[:1000]
-	hplt = []
-	t=5
-	for x in hpl:
-		if x.symbol==symbol:
-			hplt.append(x)
-	return(hplt)
-			
-
 
 
 

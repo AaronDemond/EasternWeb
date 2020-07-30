@@ -6,7 +6,8 @@ import requests
 print("Gathering BTC market data")
 while True:
     print("sending get req")
-    r=requests.get("http://localhost:8000/trades")
+    #r=requests.get("http://localhost:8000/trades") #btc
+    r=requests.get("http://localhost:8000/trades2") #xrp
     r=requests.get("http://localhost:8000/invest")
 
     r2=requests.get("http://localhost:8000/get-last-price?symbol=BTCUSDT")
@@ -26,6 +27,6 @@ while True:
 
     ##################################################
     print("sleeping")
-    time.sleep(7)
+    time.sleep(1)
 
 

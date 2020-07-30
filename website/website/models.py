@@ -78,12 +78,15 @@ class Signal(models.Model):
 	total_quote = models.CharField(max_length=200,null=True)
 
 	def __str__(self):
-		if self.qty:
-			return("buy of " + self.qty + " " +self.symbol + " at " + self.price)
-		if not self.data:
-			return(self.symbol)
-		else:
-			return(self.symbol + " " + self.data)
+		try:
+			if self.qty:
+				return("buy of " + self.qty + " " +self.symbol + " at " + self.price)
+			if not self.data:
+				return(self.symbol)
+			else:
+				return(self.symbol + " " + self.data)
+		except:
+			return ("NO NAME")
 
 
 

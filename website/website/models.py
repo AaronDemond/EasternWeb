@@ -4,28 +4,6 @@ import datetime
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class HistoricalPrice(models.Model):
 	''' Record of a crypto market price '''
 

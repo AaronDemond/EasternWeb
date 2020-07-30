@@ -85,9 +85,7 @@ class Trade(models.Model):
 
 
 class Signal(models.Model):
-	''' Market Signal Model Class
-	-----------------------------
-	'''
+	'''Displayed on the admin page, import market indicators'''
 
 	name  = models.CharField(max_length=200,null=True)
 	signif  = models.CharField(max_length=200,null=True)
@@ -99,8 +97,8 @@ class Signal(models.Model):
 	qty = models.CharField(max_length=200,null=True)
 	timestamp = models.CharField(max_length=200,null=True)
 	price_change = models.CharField(max_length=200,null=True)
+	total_quote = models.CharField(max_length=200,null=True)
 
-	# Defines the text str to return on model.name
 	def __str__(self):
 		if self.qty:
 			return("buy of " + self.qty + " " +self.symbol + " at " + self.price)

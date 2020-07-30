@@ -97,13 +97,17 @@ def trades(request):
 	# signal (if needed)
 	for trade in trades_json:
 		if (float(trade['qty']) > TRADE_QTY_THRESHOLD_BTC):
+			total = float(trade['qty']) * float(trade['price'])
 			context['large_trades'].append(trade)
 			t = datetime.datetime.now()
 			s = Signal(price=trade['price'], 
 		       	 qty = trade['qty'], 
+			 source = 'binance',
+			 total_quote = str(total) + "USD",
 			 timestamp=t,
 			 symbol="BTCUSDT"
 			)
+
 			s.save()
 	context['number_of_large_trades'] = len(context['large_trades'])
 	return render(request, 'invest.html', context)
@@ -123,10 +127,13 @@ def trades2(request):
 	# signal (if needed)
 	for trade in trades_json:
 		if (float(trade['qty']) > TRADE_QTY_THRESHOLD_XRP):
+			total = float(trade['qty']) * float(trade['price'])
 			context['large_trades'].append(trade)
 			t = datetime.datetime.now()
 			s = Signal(price=trade['price'], 
 		       	 qty = trade['qty'], 
+			 source = 'Binance',
+			 total_quote = str(total) + "USD",
 			 timestamp=t,
 			 symbol="XRPUSDT"
 			)

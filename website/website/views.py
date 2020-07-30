@@ -188,17 +188,30 @@ def account(request):
 	context = { 'data' : 12345 }
 	return render(request, 'account.html', context)
 
+
+
+def getSignalsMatchingSymbol(qs, symbol):
+	'''takes a quearyset objet and a text symbol'''
+	'''returns a list of signals'''
+
+	t=[]
+	for s in qs:
+		if s.symbol==symbol:
+			t.append(s)
+	return t
+			
 def insights(request):
-	trades = Trade.objects.all().order_by("-id")[:50000]
-	context = {'trades': trades}
-	outp =""
-	hits=0
+	'''returns useful crypto info'''
 
-	for t in trades:
-		if (float(t.qty)  > 5):
-			hits=hits+1
+	# user vars
+	interval=request.GET.get('qty', '10000')
 
-	return HttpResponse("todo")
+	# method vars
+	signals = Signal.objects.all().order_by("-id")[:100]
+	context = {'trades': trades,'signals': signals}
+
+	# return rendered template
+	return render(request, 'insight.html', context)
 
 
 def getCandleData(request):

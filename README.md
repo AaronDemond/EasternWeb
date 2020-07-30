@@ -9,7 +9,7 @@
 
 
 
-Install and run:
+Install and run (uses python3):
 ----------------
 
 

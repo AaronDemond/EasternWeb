@@ -1,5 +1,6 @@
-from django.db import models 
 import datetime
+from django.db import models 
+
 '''
 class Candle:                 kline data from Binance.com
 class HistoricalBound.........price bound data from Binance.com

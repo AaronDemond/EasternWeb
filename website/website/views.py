@@ -16,6 +16,7 @@ import urllib.request
 TRADE_QTY_THRESHOLD_BTC = 1
 TRADE_QTY_THRESHOLD_XRP = 26000
 
+from website.crypto import Helper
 
 def get_binance_json(url):
 	''' Returns parsed JSON from a binance URL endpoint '''
@@ -199,16 +200,18 @@ def getSignalsMatchingSymbol(qs, symbol):
 		if s.symbol==symbol:
 			t.append(s)
 	return t
-			
 def insights(request):
 	'''returns useful crypto info'''
+
+	helper=Helper()
 
 	# user vars
 	interval=request.GET.get('qty', '10000')
 
 	# method vars
-	signals = Signal.objects.all().order_by("-id")[:100]
-	context = {'trades': trades,'signals': signals}
+	signals = Signal.objects.all().order_by("-id")[:1000]
+	signals_sorted = helper.sort(signals)
+	context = {'trades': trades,'signals': signals_sorted}
 
 	# return rendered template
 	return render(request, 'insight.html', context)

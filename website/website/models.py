@@ -1,20 +1,13 @@
 from django.db import models 
-
 import datetime
-
-
-
-class HistoricalPrice(models.Model):
-	''' Record of a crypto market price '''
-
-	price = models.FloatField(null=True, blank=True)
-	time = models.CharField(max_length=1000,null=True, blank=True)
-	symbol = models.CharField(max_length=1000,null=True, blank=True)
-	source = models.CharField(max_length=1000,null=True, blank=True)
-	avg_price = models.CharField(max_length=200,null=True, blank =True)
-
-	def __str__(self):
-		return (self.symbol + " " + str(self.price))
+'''
+class Candle:                 kline data from Binance.com
+class HistoricalBound.........price bound data from Binance.com
+class HistoricalPrice:        crypto market price data
+class HistoricalTrend.........confirmed historal movement
+class Signal:                 Market signals
+class Trade(models.Model):....trades executed on Binance.com
+'''
 
 class Candle(models.Model):
 
@@ -40,30 +33,21 @@ class Candle(models.Model):
 class HistoricalBound(models.Model):
 	pass
 
+class HistoricalPrice(models.Model):
+
+	price = models.FloatField(null=True, blank=True)
+	time = models.CharField(max_length=1000,null=True, blank=True)
+	symbol = models.CharField(max_length=1000,null=True, blank=True)
+	source = models.CharField(max_length=1000,null=True, blank=True)
+	avg_price = models.CharField(max_length=200,null=True, blank =True)
+
+	def __str__(self):
+		return (self.symbol + " " + str(self.price))
+
 class HistoricalTrend(models.Model):
 	pass
 
-class Trade(models.Model):
-	''' Record of A trade executed on Binance.com '''
-
-	trade_id = models.FloatField(null=True, blank=True)
-	price = models.FloatField(null=True, blank=True)
-	qty = models.FloatField(null=True, blank=True)
-	quoteQty = models.FloatField(null=True, blank=True)
-	symbol = models.CharField(max_length=200,null=True, blank =True)
-	source = models.CharField(max_length=1000,null=True, blank=True)
-	time = models.FloatField(null=True, blank=True)
-	isBuyerMaker = models.BooleanField(null=True, blank=True)
-
-	def __str__(self):
-		if self.symbol:
-			return(self.symbol)
-		else:
-			return("NO SYMBOL GIVEN likely btc")
-
-
 class Signal(models.Model):
-	'''Displayed on the admin page, import market indicators'''
 
 	name  = models.CharField(max_length=200,null=True)
 	signif  = models.CharField(max_length=200,null=True)
@@ -88,10 +72,19 @@ class Signal(models.Model):
 		except:
 			return ("NO NAME")
 
+class Trade(models.Model):
 
+	trade_id = models.FloatField(null=True, blank=True)
+	price = models.FloatField(null=True, blank=True)
+	qty = models.FloatField(null=True, blank=True)
+	quoteQty = models.FloatField(null=True, blank=True)
+	symbol = models.CharField(max_length=200,null=True, blank =True)
+	source = models.CharField(max_length=1000,null=True, blank=True)
+	time = models.FloatField(null=True, blank=True)
+	isBuyerMaker = models.BooleanField(null=True, blank=True)
 
-
-
-	
-
-
+	def __str__(self):
+		if self.symbol:
+			return(self.symbol)
+		else:
+			return("NO SYMBOL GIVEN likely btc")

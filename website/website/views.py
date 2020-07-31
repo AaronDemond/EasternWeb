@@ -35,7 +35,7 @@ def get_binance_json(url):
 
 
 def __get_last_price(request):
-	''' Returns a HTML formated string of             '''
+	''' Returns an HTML formated string of             '''
 	'''  the given ticker                             '''
 	'''  market price                                 '''
 

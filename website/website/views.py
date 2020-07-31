@@ -36,8 +36,8 @@ def get_binance_json(url):
 
 def __get_last_price(request):
 	''' Returns an HTML formated string of             '''
-	'''  the given ticker                             '''
-	'''  market price                                 '''
+	'''  the given ticker                              '''
+	'''  market price                                  '''
 
 	symbol = request.GET.get('symbol','LTCBTC')
 	url = BINANCE_TICKER_URL + '?symbol=' + symbol

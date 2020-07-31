@@ -37,6 +37,19 @@ class Helper():
 
 	def getBTCSignal(self):
 		return("ETH SIGNAL")
+
+
+class DataAnalayzer():
+
+	def __init__(self,data):
+		self.data=data
+
+	def __str__(self):
+		return("data analyzer object")
+
+	def spawnAlert(self,data):
+		pass
+
 		
 	
 

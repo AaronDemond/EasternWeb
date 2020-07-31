@@ -6,11 +6,11 @@ from .views import shop as shop_page
 from .views import contact as contact_page
 from .views import account as account_page
 from .views import invest as invest_page
-from .views import get_last_price 
+from .views import __get_last_price as get_last_price 
 from .views import insights
 from .views import getCandleData
 from .views import trades  as trades_page
-from .views import trades2
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -19,7 +19,6 @@ urlpatterns = [
     path('shop', shop_page, name='shop'),
     path('invest', invest_page, name='invest'),
     path('trades', trades_page, name='trades'),
-    path('trades2', trades2, name='trades2'),
     path('insights', insights, name='insights'),
     path('i', insights, name='insights'),
     path('get-last-price', get_last_price, name='get_last_price'),

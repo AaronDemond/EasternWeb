@@ -13,8 +13,18 @@ import json
 import requests
 import urllib.request
 
-TRADE_QTY_THRESHOLD_BTC = 1
+TRADE_QTY_THRESHOLD_BTC = 10
 TRADE_QTY_THRESHOLD_XRP = 26000
+#--------------------------------------------
+BINANCE_KLINES_URL = 'https://api.binance.com/api/v3/klines'
+#    takes symbol&interval
+BINANCE_TICKER_URL = 'https://api.binance.com/api/v3/ticker/price'
+BINANCE_TRADES_URL = 'https://api.binance.com/api/v3/trades'
+# Singal pair if symbol is passed otherwise list
+#-----------------------------------------------
+
+BINANCE_24HR_SNAPSHOT_url = "https://api.binance.com/api/v3/ticker/24hr"
+# pair list
 
 from website.crypto import Helper
 
@@ -23,145 +33,52 @@ def get_binance_json(url):
 	resp = requests.get(url)
 	return json.loads(resp.text)
 
-def write_trades_to_db(js,symbol="BTCUSDT"):
-	''' Accepts js (JSON trade data) and writes to db '''	
-	for trade in js:
-		new_trade = Trade(trade_id = trade['id'], 
-		price = trade['price'], 
-		qty = trade['qty'], 
-		symbol = symbol,
-		quoteQty = trade['quoteQty'], 
-		time = trade['time'])
-		try:
-			x = new_trade.save()
-		except:
-			print("Error saving trade")
-	return True
 
-def get_last_price(request):
-	''' Returns an HttpResponse, writes the 
-	price data to db '''
-	try:
-		symbol = request.GET.get('symbol','LTCBTC')
-	except:
-		symbol = "LTCBTC"
-		pass
+def __get_last_price(request):
+	''' Returns a HTML formated string of             '''
+	'''  the given ticker                             '''
+	'''  market price                                 '''
 
-	url = 'https://api.binance.com/api/v3/ticker/price'
-	url = url + '?symbol=' + symbol
-	resp = requests.get(url)
-	js = json.loads(resp.text)
-	t = datetime.datetime.now()
+	symbol = request.GET.get('symbol','LTCBTC')
+	url = BINANCE_TICKER_URL + '?symbol=' + symbol
+	__json = json.loads(requests.get(url).text)
+	__time = datetime.datetime.now()
+
 	historical_price = HistoricalPrice(
-			symbol=js['symbol'], 
-			price=js['price'],
-			time = t,
+			symbol=__json['symbol'], 
+			price=__json['price'],
+			time = __time,
 			source="Binance",
 			)
 	confirm = historical_price.save()
-	spawn_alert(historical_price,symbol)
 	return HttpResponse(historical_price.price)
 
-def spawn_alert(historical_price,symbol):
-	hpl = HistoricalPrice.objects.all().order_by("-id")[:10]
-	hpl1 = []
-	for x in hpl:
-		if x.symbol==symbol:
-			hpl1.append(x)
-	counter=0
-	for x in hpl1:
-		if (((float(hpl1[0].price - x.price)/x.price)*100)>0.5):
-			s = Signal(price=x.price, 
-			 timestamp=datetime.datetime.now(),
-			 data = "current price:" + str(str(hpl1[0].price) + " previous: "+str(x.price)),
-			 symbol=symbol,
-			 price_change= ((float(hpl1[0].price - x.price)/x.price)*100),
-			)
-			s.save()
-			print("alert spawned")
-
-
-
 def trades(request):
-	''' for now defaults to BTCUSDT '''
+	''' /trades?symbol[symbol] '''
+	''' writes trades to a database and returns write/fail data '''
+	''' rendered by /templates/invest.html '''
 
-	context = {}
-	context['large_trades'] = []
-	url = 'https://api.binance.com'\
-	'/api/v3/trades?symbol=BTCUSDT'
+	__symbol__ = request.GET.get('symbol','LTCBTC')
+	__apiurl__ = BINANCE_TRADES_URL+'?symbol='+__symbol__
 
-	# get json trade data & write to db
-	trades_json = get_binance_json(url)
-	success = write_trades_to_db(trades_json)
 
-	# Fill context & create & write a 
-	# signal (if needed)
-	for trade in trades_json:
-		if (float(trade['qty']) > TRADE_QTY_THRESHOLD_BTC):
-			total = float(trade['qty']) * float(trade['price'])
-			context['large_trades'].append(trade)
-			t = datetime.datetime.now()
-			s = Signal(price=trade['price'], 
-		       	 qty = trade['qty'], 
-			 source = 'binance',
-			 total_quote = str(total) + "USD",
-			 timestamp=t,
-			 symbol="BTCUSDT"
-			)
+	tradesWritten = write_trades_to_db(get_binance_json(__apiurl__),
+	__symbol__)
 
-			s.save()
-	context['number_of_large_trades'] = len(context['large_trades'])
-	return render(request, 'invest.html', context)
-def trades2(request):
-	''' for now defaults to BTCUSDT '''
 
-	context = {}
-	context['large_trades'] = []
-	url = 'https://api.binance.com'\
-	'/api/v3/trades?symbol=XRPUSDT'
+	return render(request, 'invest.html', {'data':tradesWritten})
 
-	# get json trade data & write to db
-	trades_json = get_binance_json(url)
-	success = write_trades_to_db(trades_json)
 
-	# Fill context & create & write a 
-	# signal (if needed)
-	for trade in trades_json:
-		if (float(trade['qty']) > TRADE_QTY_THRESHOLD_XRP):
-			total = float(trade['qty']) * float(trade['price'])
-			context['large_trades'].append(trade)
-			t = datetime.datetime.now()
-			s = Signal(price=trade['price'], 
-		       	 qty = trade['qty'], 
-			 source = 'Binance',
-			 total_quote = str(total) + "USD",
-			 timestamp=t,
-			 symbol="XRPUSDT"
-			)
-			s.save()
-	context['number_of_large_trades'] = len(context['large_trades'])
-	return render(request, 'invest.html', context)
 def invest(request):	
 	'''Returns general market info'''
-	context = {}
-	url = "https://api.binance.com/api/v3/ticker/24hr"
-	url2 = "https://api.binance.com/api/v3/ticker/price"
-
-	# Get 24 hour pair listing data
-	pair_listings = get_binance_json(url)
-
-	# Get current prices		
-	snapshot = get_binance_json(url2)
-	
-	# Fill context and return
-	for pair in pair_listings:
-		pair['priceChangePercent'] = float(pair['priceChangePercent'])
-	context['pair_listings'] = pair_listings
-	context['snapshot'] = snapshot
-
+	context={}
+	context['pair_listings'] = get_binance_json(BINANCE_TICKER_URL)
+	context['snapshot'] = get_binance_json(BINANCE_24HR_SNAPSHOT_url)
 	return render(request, 'invest.html', context)
 
+
 def index(request):
+	''' Home page '''
 	context = { 'data' : 12345 }
 	try:
 		value= request.POST['email']
@@ -189,54 +106,35 @@ def account(request):
 	context = { 'data' : 12345 }
 	return render(request, 'account.html', context)
 
-
-
-def getSignalsMatchingSymbol(qs, symbol):
-	'''takes a quearyset objet and a text symbol'''
-	'''returns a list of signals'''
-
-	t=[]
-	for s in qs:
-		if s.symbol==symbol:
-			t.append(s)
-	return t
 def insights(request):
 	'''returns useful crypto info'''
-
-	helper=Helper()
-
 	# user vars
 	interval=request.GET.get('qty', '10000')
 
 	# method vars
-	signals = Signal.objects.all().order_by("-id")[:1000]
-	signals_sorted = helper.sort(signals)
-	context = {'trades': trades,'signals': signals_sorted}
+	helper=Helper()
+	signals = helper.getSignalList()
+	sorted_signals = helper.sort(signals)
+	context = {'trades': trades,'signals': sorted_signals}
 
 	# return rendered template
 	return render(request, 'insight.html', context)
 
 
 def getCandleData(request):
-# returns json
-# ex: http://localhost:8000/get-candle-data?symbol=XRPUSDT 
-
-	symbol=request.GET.get('symbol', 'XRPUSDT')
+	symbol=request.GET.get('symbol', 'BTCUSDT')
 	interval=request.GET.get('interval', '30m')
-	st = 1594052883 
-	jsondata = get_binance_json('https:' +\
-'//api.binance.com/api/v3/klines?symbol=' + symbol +\
-'&interval='+interval+'&limit=7')#&startTime=' + str(st))
+	jsondata = get_binance_json(BINANCE_KLINES_URL+"?symbol="+symbol+"&interval=30m")
 	writeCandleDataset(jsondata,symbol,'Binance')
 	return HttpResponse(jsondata)
 
-def writeCandleDataset(js,s,source_str):
-	for candleDataSet in js:
+def writeCandleDataset(candleDataSetListJSON,__symbol,__source):
+	''' accepts json and writes trade candle data to db '''
+
+	for candleDataSet in candleDataSetListJSON:
 		new_candle = Candle(
-		###
-		symbol=s,
-		source=source_str,
-		###
+		symbol=__symbol,
+		source=__source,
 		open_time = candleDataSet[0],
 		open_price = candleDataSet[1],
 		high_price = candleDataSet[2],
@@ -248,11 +146,26 @@ def writeCandleDataset(js,s,source_str):
 		number_of_trades = candleDataSet[8],
 		taker_buy_base_asset_volume = candleDataSet[9],
 		taker_buy_quote_asset_volume = candleDataSet[10],
-		ignore = candleDataSet[11],
-		)
+		ignore = candleDataSet[11])
 		conf=new_candle.save()
+		# candle is now saved. Data format from Binance.
 	
-		
+def write_trades_to_db(__json,__symbol="NONE",__source='BINANCE'):
+	''' Accepts js (JSON trade data) and writes to db '''	
 
-
-
+	for trade in __json:
+		ibm=False
+		try:
+			if trade['isBuyerMaker']=='true': ibm=True
+		except:
+			pass
+		new_trade = Trade(trade_id = trade['id'], 
+			isBuyerMaker=ibm,
+			price = trade['price'], 
+			qty = trade['qty'], 
+			source=__source,
+			symbol = __symbol,
+			quoteQty = trade['quoteQty'], 
+			time = trade['time'])
+		tradeWritten = new_trade.save()
+	return True

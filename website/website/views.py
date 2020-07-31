@@ -97,7 +97,6 @@ def shop(request):
 	context = { 'data' : 12345, 't':t}
 	return render(request, 'shop.html', context)
 
-
 def contact(request):
 	context = { 'data' : 12345 }
 	return render(request, 'contact.html', context)
@@ -122,6 +121,8 @@ def insights(request):
 
 
 def getCandleData(request):
+	''' Show candle data in the browser '''
+	
 	symbol=request.GET.get('symbol', 'BTCUSDT')
 	interval=request.GET.get('interval', '30m')
 	jsondata = get_binance_json(BINANCE_KLINES_URL+"?symbol="+symbol+"&interval=30m")
@@ -129,7 +130,7 @@ def getCandleData(request):
 	return HttpResponse(jsondata)
 
 def writeCandleDataset(candleDataSetListJSON,__symbol,__source):
-	''' accepts json and writes trade candle data to db '''
+	''' accepts a list of kline data in json and writes it to db '''
 
 	for candleDataSet in candleDataSetListJSON:
 		new_candle = Candle(
@@ -149,9 +150,10 @@ def writeCandleDataset(candleDataSetListJSON,__symbol,__source):
 		ignore = candleDataSet[11])
 		conf=new_candle.save()
 		# candle is now saved. Data format from Binance.
+	return True
 	
 def write_trades_to_db(__json,__symbol="NONE",__source='BINANCE'):
-	''' Accepts js (JSON trade data) and writes to db '''	
+	''' Accepts a list of trades in json and writes them to db '''	
 
 	for trade in __json:
 		ibm=False
@@ -168,4 +170,5 @@ def write_trades_to_db(__json,__symbol="NONE",__source='BINANCE'):
 			quoteQty = trade['quoteQty'], 
 			time = trade['time'])
 		tradeWritten = new_trade.save()
+		# list of trades is now saved. Data format from Binance
 	return True

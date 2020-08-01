@@ -27,6 +27,29 @@ BINANCE_24HR_SNAPSHOT_url = "https://api.binance.com/api/v3/ticker/24hr"
 # pair list
 
 from website.crypto import Helper
+def write_trades_to_db(__json,__symbol="NONE",__source='BINANCE'):
+	''' Accepts js (JSON trade data) and writes to db '''	
+
+	for trade in __json:
+		ibm=False
+		try:
+			if trade['isBuyerMaker']=='true': ibm=True
+		except:
+			pass
+		new_trade = Trade(trade_id = trade['id'], 
+			isBuyerMaker=ibm,
+			price = trade['price'], 
+			qty = trade['qty'], 
+			source=__source,
+			symbol = __symbol,
+			quoteQty = trade['quoteQty'], 
+			time = trade['time'])
+		tradeWritten = new_trade.save()
+	return True
+
+
+
+
 
 def get_binance_json(url):
 	''' Returns parsed JSON from a binance URL endpoint '''
@@ -53,6 +76,24 @@ def __get_last_price(request):
 	confirm = historical_price.save()
 	return HttpResponse(historical_price.price)
 
+
+def __get_big_trades__(symbol):
+	trades = Trade.objects.all().order_by("-id")[:10000]
+	trade_list = []
+	for t in trades:
+		if (t.symbol==symbol and float(t.qty)>0):
+			 trade_list.append(t)
+	return trade_list
+
+def __spawnTradeSignal(symbol,trades):
+	for t in trades:
+		s = Signal(symbol=symbol,qty=t.qty)
+		s.save
+	
+
+
+	
+
 def trades(request):
 	''' /trades?symbol[symbol] '''
 	''' writes trades to a database and returns write/fail data '''
@@ -61,9 +102,24 @@ def trades(request):
 	__symbol__ = request.GET.get('symbol','LTCBTC')
 	__apiurl__ = BINANCE_TRADES_URL+'?symbol='+__symbol__
 
+	
+	tradesWritten = write_trades_to_db(__json=get_binance_json(__apiurl__),__symbol=__symbol__)
 
-	tradesWritten = write_trades_to_db(get_binance_json(__apiurl__),
-	__symbol__)
+	recent_trades=Trade.objects.all().order_by("-id")[:10000]
+	for x in recent_trades:
+		if float(x.qty>1):
+			if x.symbol=="BTCUSDT":
+				s=Signal(symbol="BTCUSDT",qty=x.qty,price=x.price)
+				success=s.save()
+			if x.symbol=="ETHUSDT":
+				if float(x.qty>1):
+					s=Signal(symbol="ETHUSDT",qty=x.qty,price=x.price)
+					success=s.save()
+			if x.symbol=="XRPUSDT":
+				if float(x.qty>10000):
+					s=Signal(symbol="XRPUSDT",qty=x.qty,price=x.price)
+					success=s.save()
+			
 
 
 	return render(request, 'invest.html', {'data':tradesWritten})
@@ -108,14 +164,11 @@ def account(request):
 
 def insights(request):
 	'''returns useful crypto info'''
-	# user vars
-	interval=request.GET.get('qty', '10000')
 
-	# method vars
-	helper=Helper()
-	signals = helper.getSignalList()
-	sorted_signals = helper.sort(signals)
-	context = {'trades': trades,'signals': sorted_signals}
+	from website.crypto import SignalHelper
+	sh = SignalHelper()
+	bt=sh.getBigTrades(symbol="BTCUSDT", tradelist=[t for t in Trade.objects.all().order_by("-id")[:100000]], qty_min = 10)
+	context={'bt':bt}
 
 	# return rendered template
 	return render(request, 'insight.html', context)
@@ -150,22 +203,10 @@ def writeCandleDataset(candleDataSetListJSON,__symbol,__source):
 		conf=new_candle.save()
 		# candle is now saved. Data format from Binance.
 	
-def write_trades_to_db(__json,__symbol="NONE",__source='BINANCE'):
-	''' Accepts js (JSON trade data) and writes to db '''	
 
-	for trade in __json:
-		ibm=False
-		try:
-			if trade['isBuyerMaker']=='true': ibm=True
-		except:
-			pass
-		new_trade = Trade(trade_id = trade['id'], 
-			isBuyerMaker=ibm,
-			price = trade['price'], 
-			qty = trade['qty'], 
-			source=__source,
-			symbol = __symbol,
-			quoteQty = trade['quoteQty'], 
-			time = trade['time'])
-		tradeWritten = new_trade.save()
-	return True
+
+
+
+
+
+

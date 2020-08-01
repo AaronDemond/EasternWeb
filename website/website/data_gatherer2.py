@@ -1,17 +1,20 @@
 from datetime import datetime
 from colorama import Fore, Style
+import crypto
+
 import requests, time
 import os
-SYMBOLPAIRS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'XLMUSDT', 'KNCUSDT', 'DASHUSDT']
+SYMBOLPAIRS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'XLMUSDT', 'KNCUSDT', 'DASHUSDT', 'RLCUSDT', 'BANDUSDT']
 VERSION="0.0"
 GREETING="EasternWeb Project \nVersion: "+VERSION+"\n------"
+
 
 class DataGatherer():
 	
 	def __init__(self):
 		self.symbolpairs=SYMBOLPAIRS
 		print(GREETING)
-
+	
 
 	def gather_priceData(self,symbol='BTCUSDT'):
 		r=requests.get("http://localhost:8000/get-last-price?symbol="+symbol)
@@ -28,15 +31,18 @@ def cls():
 
 
 
+
+
 def __main__():
 
 	dg = DataGatherer()
 
 	while True:	
-		print("collecting price data\n\n")
+		print("collecting trade data\n\n")
 		for s in dg.symbolpairs:
-			print(dg.gather_priceData(s))
-			print("=========")
+
+			print(dg.gather_tradeData(s))
+
 
 		print("sleeping")
 		print("###############")

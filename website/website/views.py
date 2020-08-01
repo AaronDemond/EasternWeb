@@ -1,3 +1,4 @@
+
 import datetime
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
@@ -58,9 +59,9 @@ def get_binance_json(url):
 
 
 def __get_last_price(request):
-	''' Returns a HTML formated string of             '''
-	'''  the given ticker                             '''
-	'''  market price                                 '''
+	''' Returns an HTML formated string of             '''
+	'''  the given ticker                              '''
+	'''  market price                                  '''
 
 	symbol = request.GET.get('symbol','LTCBTC')
 	url = BINANCE_TICKER_URL + '?symbol=' + symbol
@@ -153,7 +154,6 @@ def shop(request):
 	context = { 'data' : 12345, 't':t}
 	return render(request, 'shop.html', context)
 
-
 def contact(request):
 	context = { 'data' : 12345 }
 	return render(request, 'contact.html', context)
@@ -175,6 +175,8 @@ def insights(request):
 
 
 def getCandleData(request):
+	''' Show candle data in the browser '''
+	
 	symbol=request.GET.get('symbol', 'BTCUSDT')
 	interval=request.GET.get('interval', '30m')
 	jsondata = get_binance_json(BINANCE_KLINES_URL+"?symbol="+symbol+"&interval=30m")
@@ -182,7 +184,7 @@ def getCandleData(request):
 	return HttpResponse(jsondata)
 
 def writeCandleDataset(candleDataSetListJSON,__symbol,__source):
-	''' accepts json and writes trade candle data to db '''
+	''' accepts a list of kline data in json and writes it to db '''
 
 	for candleDataSet in candleDataSetListJSON:
 		new_candle = Candle(
@@ -202,11 +204,6 @@ def writeCandleDataset(candleDataSetListJSON,__symbol,__source):
 		ignore = candleDataSet[11])
 		conf=new_candle.save()
 		# candle is now saved. Data format from Binance.
+	return True
 	
-
-
-
-
-
-
 

@@ -1,4 +1,4 @@
-from website.models import Signal
+
 class Helper():
 	def sort(self,signals):
 		'''Accepts a queryset or list of signals and returns a
@@ -47,9 +47,26 @@ class DataAnalayzer():
 	def __str__(self):
 		return("data analyzer object")
 
-	def spawnAlert(self,data):
-		pass
+	def getBigVolumeTradeList(self,alert_type,data,__symbol):
+		bigVolumeTradeList=[]
+		if alert_type == 'volume':
+			for trade in data:
+				if trade.qty>1:
+					bigVolumeTradeList.append(trade)
 
-		
+		return bigVolumeTradeList
+
+class SignalHelper():
+	def someFunction(self):
+		return("hello world")
+
+	def getBigTrades(self,symbol, tradelist, qty_min):
+		bt=[]
+		for trade in tradelist:
+			if float(trade.qty) > qty_min:
+				if trade.symbol == symbol:
+					bt.append(trade)
+		return bt
+
 	
-
+	

@@ -10,6 +10,7 @@ class Signal:                 Market signals
 class Trade(models.Model):....trades executed on Binance.com
 '''
 
+
 class Candle(models.Model):
 
 	open_time = models.CharField(max_length=200,null=True, blank =True)

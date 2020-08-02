@@ -12,7 +12,6 @@
 Install and run (uses python3):
 ----------------
 
-
 0. Clone repo
 1. Install Django: `$pip install Django`
 2. Run the server: `$python manage.py runserver`

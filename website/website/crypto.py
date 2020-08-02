@@ -57,6 +57,28 @@ class DataAnalayzer():
 		return bigVolumeTradeList
 
 class SignalHelper():
+	def getPriceChangeAlert(self,recentBTCUSDTPrice_QS, symbol_str):
+			from website.models import Signal
+			rbpq = recentBTCUSDTPrice_QS
+
+			n = [float(rbpq[0].price), float(rbpq[1].price)]
+				# n[0] = newer
+			p_change = (((n[0] - n[1])/n[1]) * 100)
+			if (p_change > 1):
+				newSignal = Signal(symbol=symbol_str+" PRICE ALERT")
+				s=newSignal.save()
+				alert_str= "Price increase alert: " + symbol_str + " " + str(p_change)
+				alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
+			if (p_change < 0):
+				newSignal = Signal(symbol=symbol_str+" PRICE ALERT")
+				s=newSignal.save()
+				alert_str= "Price decrease alert: " + symbol_str + " " + str(p_change)
+				alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
+			else:
+				alert_str = "No major movement: " + symbol_str + " " + str(n[0])
+				alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
+			return alert_str
+
 	def someFunction(self):
 		return("hello world")
 

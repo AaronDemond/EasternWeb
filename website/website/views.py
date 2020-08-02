@@ -58,24 +58,32 @@ def get_binance_json(url):
 	return json.loads(resp.text)
 
 
+from website.crypto import SignalHelper
 def __get_last_price(request):
 	''' Returns an HTML formated string of             '''
 	'''  the given ticker                              '''
 	'''  market price                                  '''
 
-	symbol = request.GET.get('symbol','LTCBTC')
-	url = BINANCE_TICKER_URL + '?symbol=' + symbol
-	__json = json.loads(requests.get(url).text)
-	__time = datetime.datetime.now()
+	symbol_str = request.GET.get('symbol','LTCBTC')
+	url_str = BINANCE_TICKER_URL + '?symbol=' + symbol_str
+	price_json = json.loads(requests.get(url_str).text)
+	timestamp_str = datetime.datetime.now()
 
-	historical_price = HistoricalPrice(
-			symbol=__json['symbol'], 
-			price=__json['price'],
-			time = __time,
+	historicalPrice = HistoricalPrice(
+			symbol=price_json['symbol'], 
+			price=price_json['price'],
+			time = timestamp_str,
 			source="Binance",
 			)
-	confirm = historical_price.save()
-	return HttpResponse(historical_price.price)
+	confirmation = historicalPrice.save()
+	BTCUSDTPrice_QS = HistoricalPrice.objects.filter(symbol__contains=symbol_str)
+	recentBTCUSDTPrice_QS = BTCUSDTPrice_QS.order_by("-id")[:2]
+	sh = SignalHelper()
+	alertString = sh.getPriceChangeAlert(recentBTCUSDTPrice_QS, symbol_str)
+
+	return HttpResponse(alertString)
+	
+
 
 
 def __get_big_trades__(symbol):
@@ -105,23 +113,6 @@ def trades(request):
 
 	
 	tradesWritten = write_trades_to_db(__json=get_binance_json(__apiurl__),__symbol=__symbol__)
-
-	recent_trades=Trade.objects.all().order_by("-id")[:10000]
-	for x in recent_trades:
-		if float(x.qty>1):
-			if x.symbol=="BTCUSDT":
-				s=Signal(symbol="BTCUSDT",qty=x.qty,price=x.price)
-				success=s.save()
-			if x.symbol=="ETHUSDT":
-				if float(x.qty>1):
-					s=Signal(symbol="ETHUSDT",qty=x.qty,price=x.price)
-					success=s.save()
-			if x.symbol=="XRPUSDT":
-				if float(x.qty>10000):
-					s=Signal(symbol="XRPUSDT",qty=x.qty,price=x.price)
-					success=s.save()
-			
-
 
 	return render(request, 'invest.html', {'data':tradesWritten})
 

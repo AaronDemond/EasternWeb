@@ -9,7 +9,7 @@
 
 
 
-Runtime instructions (uses python3):
+Runtime Instructions (uses Python3):
 ----------------
 
 1. Run the server: `$./start-server.sh`

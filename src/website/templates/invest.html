@@ -1,0 +1,185 @@
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+
+  <title>EasternWeb</title>
+
+  <!-- Bootstrap core CSS -->
+{% load static %}
+  <link href='{% static "/bootstrap/css/bootstrap.min.css" %}' rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">EasternWeb</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+<div id="login-style" >
+{% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="/admin">{{request.user}}</a>
+          </li>
+{% else %}
+
+          <li class="nav-item">
+            <a class="nav-link" href="/admin">Login</a>
+          </li>
+
+{% endif %}
+</div>
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/shop">Shop</a>
+          </li>
+	<li class="nav-item active">
+            <a class="nav-link" href="/invest">Invest</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+
+
+  <!-- Page Content -->
+{% load humanize %}
+
+<div class="row">
+	<div class="col-lg-12">
+<a href="/trades">->trades</a><br>
+<a href="/invest">->24 hour</a>
+
+
+{% if number_of_large_trades %}
+<h2>large trades</h2>
+<p>
+	number of large trades: {{number_of_large_trades}} <br>
+	{% for l in large_trades %}
+		<br>
+		{{l}}
+
+	{% endfor %}
+</p>
+
+
+
+{% else %}
+
+
+<h1>Current Live Prices (BINANCE)</h1>
+<div class="row">
+<div class="col-sm-12">
+	<input autocomplete="off" type="text" id="search">
+<button type="button" class="btn btn-dark" id="filter-btn">Filter</button>
+<hr>
+
+</div>
+</div>
+
+<div class="row">
+
+		{% for pair in snapshot %}
+	<div class="col-sm-1 symbol-container" id="{{pair.symbol}}">
+		<div class="symbol">{{pair.symbol}}</div> {{pair.price}}	
+
+
+	</div>
+		{% endfor %}
+</div>
+
+SNTETH
+
+<h1>Market 24 Hour Data</h1>
+<h1>DATA</h1>
+{{data}}
+<h1>ENDDATA</h1>
+<style>
+.symbol-card {
+border-style:dotted;
+}
+</style>
+<div class = "row trading-pair-row">
+	{% for trading_pair in pair_listings  %}
+	<div class ="col-lg-4 symbol-card" {% if trading_pair.priceChangePercent > 0 %} style="background-color:lightgreen"{% else %}style="background-color:red" {% endif %} >
+
+		<span class="symbol" style="">{{trading_pair.symbol}}</span> <br>
+		open = {{trading_pair.openPrice}} <br>
+		last = {{trading_pair.lastPrice}} <br>
+		high = {{trading_pair.highPrice}} <br>
+		low = {{trading_pair.lowPrice}} <br>
+		Price Change = {{trading_pair.priceChange}} <br>
+		Price Percentage Change = {{trading_pair.priceChangePercent}} <br>
+	</div> <! -- Trading pair row -->
+	{% endfor %}
+{% endif %}
+
+		
+
+
+{{xlm.0}}
+
+</div>
+
+</div> <!-- div row end -->
+</div>
+
+
+</div>
+<hr/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src='{% static "/jquery/jquery.slim.min.js" %}'></script>
+  <script src='{% static "/jquery/jquery.js" %}'></script>
+  <script src='{% static "/bootstrap/js/bootstrap.bundle.min.js" %}'></script>
+  <link href='{% static "/bootstrap/css/bootstrap.min.css" %}' rel="stylesheet">
+<style>
+.symbol-container {
+background-color: lightgrey;
+}
+</style>
+<script>
+$("#filter-btn").click(function(){
+	$(".symbol-container").css("background-color", "grey");
+	search_q = ($("#search").val()).toUpperCase();
+	div_id = "#"+search_q;
+	$ ( ".symbol-container[id*='" + search_q + "']" ).css("background-color", "darkorange");
+	
+$.ajax({
+  url: "/i",
+  success: (function(data) {
+	console.log(data);
+  }) 
+});
+
+
+}); 
+</script>
+</body>
+
+</html>
+

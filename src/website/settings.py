@@ -3,14 +3,23 @@ Django settings for the EasternWeb project
 """
 import os
 
+
+######GLOBALS#######
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'nvo_)+)$4kzqsgo^5w%wwb*h9bp#fn!+eu3&02!)onu#+&4obn'
-
 DEBUG = True
-
 ALLOWED_HOSTS = []
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+STATIC_URL = '/static/'
 
+
+# Django Reqs
 INSTALLED_APPS = [
         'website',
     'django.contrib.admin',
@@ -22,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
 ]
 
+#engines
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -34,6 +44,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'website.urls'
 
+#html
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -70,22 +81,3 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/3.0/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = '/static/'

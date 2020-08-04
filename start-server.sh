@@ -1,3 +1,3 @@
 #!/bin/bash
-python website/manage.py runserver
+python src/manage.py runserver
 

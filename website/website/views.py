@@ -142,22 +142,6 @@ def index(request):
 		value = -1
 	return render(request, 'index.html', context)
 
-def about(request):
-	context = { 'data' : 12345 }
-	return render(request, 'about.html', context)
-
-def shop(request):
-	t = datetime.datetime.now()
-	context = { 'data' : 12345, 't':t}
-	return render(request, 'shop.html', context)
-
-def contact(request):
-	context = { 'data' : 12345 }
-	return render(request, 'contact.html', context)
-
-def account(request):
-	context = { 'data' : 12345 }
-	return render(request, 'account.html', context)
 
 def insights(request):
 	'''returns useful crypto info'''

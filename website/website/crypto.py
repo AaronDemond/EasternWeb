@@ -14,6 +14,7 @@ import json
 import requests
 import urllib.request
 import datetime, time
+
 class Helper():
 	def sort(self,signals):
 		'''Accepts a queryset or list of signals and returns a
@@ -38,7 +39,6 @@ class Helper():
 		list_object.sort(key=getQty,reverse=True)
 		return list_object
 
-
 	def getSignalList(self,symbol='BTCUSDT'):
 		'''returns a list object of the given symbol'''
 		l=[]
@@ -53,7 +53,6 @@ class Helper():
 	def getBTCSignal(self):
 		return("ETH SIGNAL")
 
-
 class DataAnalayzer():
 
 	def __init__(self,data):
@@ -62,8 +61,8 @@ class DataAnalayzer():
 	def __str__(self):
 		return("data analyzer object")
 
-
 class SignalHelper():
+
 	def getPriceChangeAlert(self,recentBTCUSDTPrice_QS, symbol_str):
 			rbpq = recentBTCUSDTPrice_QS
 
@@ -84,7 +83,6 @@ class SignalHelper():
 				alert_str = "No major movement: " + symbol_str + " " + str(n[0])
 				alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
 			return alert_str
-
 
 	def generateVolumeSignal(self, trade, symbol_str):
 		signal_discovered = False
@@ -109,8 +107,6 @@ class SignalHelper():
 			return True
 		return False
 
-		
-
 	def someFunction(self):
 		return("hello world")
 
@@ -120,7 +116,4 @@ class SignalHelper():
 			if float(trade.qty) > qty_min:
 				if trade.symbol == symbol:
 					bt.append(trade)
-		return bt
-
-	
-	
+		return bt	

@@ -50,15 +50,10 @@ def write_trades_to_db(__json,__symbol="NONE",__source='BINANCE'):
 			print ("Volume signal generated")
 	return True
 
-
-
-
-
 def get_binance_json(url):
 	''' Returns parsed JSON from a binance URL endpoint '''
 	resp = requests.get(url)
 	return json.loads(resp.text)
-
 
 from website.crypto import SignalHelper
 def __get_last_price(request):
@@ -83,14 +78,9 @@ def __get_last_price(request):
 			source="Binance",
 			).save()
 
+	priceChangeAlert_str = sh.getPriceChangeAlert(recentBTCUSDTPrice_QS, symbol_str)	
 
-	priceChangeAlert_str = sh.getPriceChangeAlert(recentBTCUSDTPrice_QS, symbol_str)
-	
-
-	return HttpResponse(priceChangeAlert_str)
-	
-
-
+	return HttpResponse(priceChangeAlert_str)	
 
 def __get_big_trades__(symbol):
 	trades = Trade.objects.all().order_by("-id")[:10000]
@@ -104,9 +94,6 @@ def __spawnTradeSignal(symbol,trades):
 	for t in trades:
 		s = Signal(symbol=symbol,qty=t.qty)
 		s.save
-	
-
-	
 
 def trades(request):
 	''' /trades?symbol[symbol] '''
@@ -116,12 +103,9 @@ def trades(request):
 	__symbol__ = request.GET.get('symbol','LTCBTC')
 	__apiurl__ = BINANCE_TRADES_URL+'?symbol='+__symbol__
 	
-
-	
 	tradesWritten = write_trades_to_db(__json=get_binance_json(__apiurl__),__symbol=__symbol__)
 
 	return render(request, 'invest.html', {'data':tradesWritten})
-
 
 def invest(request):	
 	'''Returns general market info'''
@@ -129,7 +113,6 @@ def invest(request):
 	context['pair_listings'] = get_binance_json(BINANCE_TICKER_URL)
 	context['snapshot'] = get_binance_json(BINANCE_24HR_SNAPSHOT_url)
 	return render(request, 'invest.html', context)
-
 
 def index(request):
 	''' Home page '''
@@ -142,7 +125,6 @@ def index(request):
 		value = -1
 	return render(request, 'index.html', context)
 
-
 def insights(request):
 	'''returns useful crypto info'''
 
@@ -153,7 +135,6 @@ def insights(request):
 
 	# return rendered template
 	return render(request, 'insight.html', context)
-
 
 def getCandleData(request):
 	''' Show candle data in the browser '''
@@ -186,5 +167,3 @@ def writeCandleDataset(candleDataSetListJSON,__symbol,__source):
 		conf=new_candle.save()
 		# candle is now saved. Data format from Binance.
 	return True
-	
-

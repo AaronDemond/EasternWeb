@@ -10,7 +10,6 @@ class Signal:                 Market signals
 class Trade(models.Model):....trades executed on Binance.com
 '''
 
-
 class Candle(models.Model):
 
 	open_time = models.CharField(max_length=200,null=True, blank =True)
@@ -28,12 +27,13 @@ class Candle(models.Model):
 	ignore = models.CharField(max_length=200,null=True, blank =True)
 	symbol = models.CharField(max_length=200,null=True, blank =True)
 
-
 	def __str__(self):
 		return(self.symbol)
 
+
 class HistoricalBound(models.Model):
 	pass
+
 
 class HistoricalPrice(models.Model):
 
@@ -45,6 +45,7 @@ class HistoricalPrice(models.Model):
 
 	def __str__(self):
 		return (self.symbol + " " + str(self.price))
+
 
 class HistoricalTrend(models.Model):
 	pass

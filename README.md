@@ -9,11 +9,9 @@
 
 
 
-Install and run (uses python3):
+Runtime Instructions (uses Python3):
 ----------------
 
-0. Clone repo
-1. Install Django: `$pip install Django`
-2. Run the server: `$python manage.py runserver`
-3. Run the data gatherer script: `$python3 data_gatherer2.py`
-4. Visit `localhost:8000` in a browser
+1. Run the server: `$./start-server.sh`
+2. Run the data gatherer script: `$./gatherer.sh`
+

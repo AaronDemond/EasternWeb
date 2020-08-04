@@ -27,10 +27,10 @@ BINANCE_TRADES_URL = 'https://api.binance.com/api/v3/trades'
 BINANCE_24HR_SNAPSHOT_url = "https://api.binance.com/api/v3/ticker/24hr"
 # pair list
 
-from website.crypto import Helper
 def write_trades_to_db(__json,__symbol="NONE",__source='BINANCE'):
 	''' Accepts js (JSON trade data) and writes to db '''	
 
+	sh = SignalHelper()
 	for trade in __json:
 		ibm=False
 		try:
@@ -46,6 +46,8 @@ def write_trades_to_db(__json,__symbol="NONE",__source='BINANCE'):
 			quoteQty = trade['quoteQty'], 
 			time = trade['time'])
 		tradeWritten = new_trade.save()
+		if sh.generateVolumeSignal(new_trade,__symbol):
+			print ("Volume signal generated")
 	return True
 
 
@@ -69,19 +71,23 @@ def __get_last_price(request):
 	price_json = json.loads(requests.get(url_str).text)
 	timestamp_str = datetime.datetime.now()
 
+	sh = SignalHelper()
+
+	BTCUSDTPrice_QS = HistoricalPrice.objects.filter(symbol__contains=symbol_str)
+	recentBTCUSDTPrice_QS = BTCUSDTPrice_QS.order_by("-id")[:2]
+
 	historicalPrice = HistoricalPrice(
-			symbol=price_json['symbol'], 
+			symbol=symbol_str, 
 			price=price_json['price'],
 			time = timestamp_str,
 			source="Binance",
-			)
-	confirmation = historicalPrice.save()
-	BTCUSDTPrice_QS = HistoricalPrice.objects.filter(symbol__contains=symbol_str)
-	recentBTCUSDTPrice_QS = BTCUSDTPrice_QS.order_by("-id")[:2]
-	sh = SignalHelper()
-	alertString = sh.getPriceChangeAlert(recentBTCUSDTPrice_QS, symbol_str)
+			).save()
 
-	return HttpResponse(alertString)
+
+	priceChangeAlert_str = sh.getPriceChangeAlert(recentBTCUSDTPrice_QS, symbol_str)
+	
+
+	return HttpResponse(priceChangeAlert_str)
 	
 
 
@@ -100,7 +106,6 @@ def __spawnTradeSignal(symbol,trades):
 		s.save
 	
 
-
 	
 
 def trades(request):
@@ -110,6 +115,7 @@ def trades(request):
 
 	__symbol__ = request.GET.get('symbol','LTCBTC')
 	__apiurl__ = BINANCE_TRADES_URL+'?symbol='+__symbol__
+	
 
 	
 	tradesWritten = write_trades_to_db(__json=get_binance_json(__apiurl__),__symbol=__symbol__)

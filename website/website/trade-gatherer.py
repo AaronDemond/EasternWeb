@@ -20,8 +20,8 @@ class DataGatherer():
 		return(symbol + " PRICE: " + r.text)
 
 	def gather_tradeData(self,symbol='BTCUSDT'):
-		r=requests.get("http://localhost:8000/trades")
-		return("BTC trade-objs > db")
+		r=requests.get("http://localhost:8000/trades?symbol=" + symbol)
+		return(symbol + " trade-objs > db")
 
 
 
@@ -37,10 +37,10 @@ def __main__():
 	dg = DataGatherer()
 
 	while True:	
-		print("collecting price data\n\n")
+		print("collecting trade data\n\n")
 		for s in dg.symbolpairs:
-			print(dg.gather_priceData(s))
-	
+
+			print(dg.gather_tradeData(s))
 
 
 		print("sleeping")

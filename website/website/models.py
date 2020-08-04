@@ -51,28 +51,21 @@ class HistoricalTrend(models.Model):
 
 class Signal(models.Model):
 
-	name  = models.CharField(max_length=200,null=True)
-	signif  = models.CharField(max_length=200,null=True)
-	action_url  = models.CharField(max_length=200,null=True)
-	source  = models.CharField(max_length=200,null=True)
-	data  = models.CharField(max_length=200,null=True)
-	symbol = models.CharField(max_length=200,null=True)
-	price = models.CharField(max_length=200,null=True)
-	qty = models.CharField(max_length=200,null=True)
-	timestamp = models.CharField(max_length=200,null=True)
-	price_change = models.CharField(max_length=200,null=True)
-	total_quote = models.CharField(max_length=200,null=True)
+	name  = models.CharField(max_length=200,blank=True,null=True)
+	signal_type  = models.CharField(max_length=200,blank=True,null=True)
+	signif  = models.CharField(max_length=200,blank=True,null=True)
+	action_url  = models.CharField(max_length=200,blank=True,null=True)
+	source  = models.CharField(max_length=200,blank=True,null=True)
+	data  = models.CharField(max_length=200,blank=True,null=True)
+	symbol = models.CharField(max_length=200,blank=True,null=True)
+	price = models.CharField(max_length=200,blank=True,null=True)
+	qty = models.CharField(max_length=200,blank=True,null=True)
+	timestamp = models.CharField(max_length=200,blank=True,null=True)
+	price_change = models.CharField(max_length=200,blank=True,null=True)
+	total_quote = models.CharField(max_length=200,blank=True,null=True)
 
 	def __str__(self):
-		try:
-			if self.qty:
-				return("buy of " + self.qty + " " +self.symbol + " at " + self.price)
-			if not self.data:
-				return(self.symbol)
-			else:
-				return(self.symbol + " " + self.data)
-		except:
-			return ("NO NAME")
+		return (str(self.id))
 
 class Trade(models.Model):
 

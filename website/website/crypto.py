@@ -1,4 +1,19 @@
+from website.models import Signal, Trade
+import datetime
+from django.contrib.auth.models import User
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
+from django.template import loader
+from website.models import Trade, Trade, Signal, HistoricalPrice, Candle
 
+import time
+import os
+import os.path
+import wget
+import json
+import requests
+import urllib.request
+import datetime, time
 class Helper():
 	def sort(self,signals):
 		'''Accepts a queryset or list of signals and returns a
@@ -47,18 +62,9 @@ class DataAnalayzer():
 	def __str__(self):
 		return("data analyzer object")
 
-	def getBigVolumeTradeList(self,alert_type,data,__symbol):
-		bigVolumeTradeList=[]
-		if alert_type == 'volume':
-			for trade in data:
-				if trade.qty>1:
-					bigVolumeTradeList.append(trade)
-
-		return bigVolumeTradeList
 
 class SignalHelper():
 	def getPriceChangeAlert(self,recentBTCUSDTPrice_QS, symbol_str):
-			from website.models import Signal
 			rbpq = recentBTCUSDTPrice_QS
 
 			n = [float(rbpq[0].price), float(rbpq[1].price)]
@@ -79,10 +85,36 @@ class SignalHelper():
 				alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
 			return alert_str
 
+
+	def generateVolumeSignal(self, trade, symbol_str):
+		signal_discovered = False
+		if symbol_str == "BTCUSDT":
+			if (float(trade.qty) > 0):
+				signal_discovered=True
+		if symbol_str == "ETHUSDT":
+			if (float(trade.qty) > 0):
+				signal_discovered=True
+		if symbol_str == "XRPUSDT":
+			if (float(trade.qty) > 00000): 
+				signal_discovered=True
+		if symbol_str == "KNCUSDT":
+			if (float(trade.qty) > 500): 
+				signal_discovered=True
+		if signal_discovered == True:
+			print ("spawning alert")
+			newSignal = Signal(symbol=symbol_str,
+					source = "BINANCE",
+					signal_type = "volume")
+			ns = newSignal.save()
+			return True
+		return False
+
+		
+
 	def someFunction(self):
 		return("hello world")
 
-	def getBigTrades(self,symbol, tradelist, qty_min):
+	def getBigTrades(self,symbol):
 		bt=[]
 		for trade in tradelist:
 			if float(trade.qty) > qty_min:

@@ -31,7 +31,6 @@ class Helper():
 		def getQty(x):
 			try:
 				q=float(x.qty)
-
 			except:
 				q=0
 			return q

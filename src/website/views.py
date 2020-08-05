@@ -1,4 +1,4 @@
-
+import time
 import datetime
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
@@ -27,11 +27,12 @@ BINANCE_TRADES_URL = 'https://api.binance.com/api/v3/trades'
 BINANCE_24HR_SNAPSHOT_url = "https://api.binance.com/api/v3/ticker/24hr"
 # pair list
 
-def write_trades_to_db(__json,__symbol="NONE",__source='BINANCE'):
+def trades_from_json(json,symbol="NONE",source='BINANCE'):
 	''' Accepts js (JSON trade data) and writes to db '''	
 
 	sh = SignalHelper()
-	for trade in __json:
+	tradelist = []
+	for trade in json:
 		ibm=False
 		try:
 			if trade['isBuyerMaker']=='true': ibm=True
@@ -41,14 +42,13 @@ def write_trades_to_db(__json,__symbol="NONE",__source='BINANCE'):
 			isBuyerMaker=ibm,
 			price = trade['price'], 
 			qty = trade['qty'], 
-			source=__source,
-			symbol = __symbol,
+			source=source,
+			symbol = symbol,
 			quoteQty = trade['quoteQty'], 
 			time = trade['time'])
-		tradeWritten = new_trade.save()
-		if sh.generateVolumeSignal(new_trade,__symbol):
-			print ("Volume signal generated")
-	return True
+
+		tradelist.append(new_trade)
+	return tradelist
 
 def get_binance_json(url):
 	''' Returns parsed JSON from a binance URL endpoint '''
@@ -64,12 +64,11 @@ def __get_last_price(request):
 	symbol_str = request.GET.get('symbol','LTCBTC')
 	url_str = BINANCE_TICKER_URL + '?symbol=' + symbol_str
 	price_json = json.loads(requests.get(url_str).text)
-	timestamp_str = datetime.datetime.now()
-
+	timestamp_str = datetime.datetime.now().timestamp()
 	sh = SignalHelper()
 
-	BTCUSDTPrice_QS = HistoricalPrice.objects.filter(symbol__contains=symbol_str)
-	recentBTCUSDTPrice_QS = BTCUSDTPrice_QS.order_by("-id")[:2]
+	recent_prices_QS = HistoricalPrice.objects.filter(symbol__contains=symbol_str)
+	recent_prices_QS = recent_prices_QS.order_by("-id")[:2]
 
 	historicalPrice = HistoricalPrice(
 			symbol=symbol_str, 
@@ -78,34 +77,26 @@ def __get_last_price(request):
 			source="Binance",
 			).save()
 
-	priceChangeAlert_str = sh.getPriceChangeAlert(recentBTCUSDTPrice_QS, symbol_str)	
+	priceChangeAlert_str = sh.getPriceChangeAlert(recent_prices_QS, symbol_str)	
 
 	return HttpResponse(priceChangeAlert_str)	
-
-def __get_big_trades__(symbol):
-	trades = Trade.objects.all().order_by("-id")[:10000]
-	trade_list = []
-	for t in trades:
-		if (t.symbol==symbol and float(t.qty)>0):
-			 trade_list.append(t)
-	return trade_list
-
-def __spawnTradeSignal(symbol,trades):
-	for t in trades:
-		s = Signal(symbol=symbol,qty=t.qty)
-		s.save
 
 def trades(request):
 	''' /trades?symbol[symbol] '''
 	''' writes trades to a database and returns write/fail data '''
 	''' rendered by /templates/invest.html '''
 
-	__symbol__ = request.GET.get('symbol','LTCBTC')
-	__apiurl__ = BINANCE_TRADES_URL+'?symbol='+__symbol__
+	symbol_str = request.GET.get('symbol','')
+	apiurl_str = BINANCE_TRADES_URL + '?symbol=' + symbol_str
+	sh = SignalHelper()
 	
-	tradesWritten = write_trades_to_db(__json=get_binance_json(__apiurl__),__symbol=__symbol__)
+	tradelist = trades_from_json(json=get_binance_json(apiurl_str),
+				symbol=symbol_str)
 
-	return render(request, 'invest.html', {'data':tradesWritten})
+	for t in tradelist:
+		if sh.generateVolumeSignal(t,symbol_str):
+			print ("Volume signal generated")
+	return render(request, 'invest.html', {'data': tradelist})
 
 def invest(request):	
 	'''Returns general market info'''

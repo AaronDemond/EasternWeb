@@ -87,13 +87,13 @@ class SignalHelper():
 	def generateVolumeSignal(self, trade, symbol_str):
 		signal_discovered = False
 		if symbol_str == "BTCUSDT":
-			if (float(trade.qty) > 0):
+			if (float(trade.qty) > 1.2):
 				signal_discovered=True
 		if symbol_str == "ETHUSDT":
-			if (float(trade.qty) > 0):
+			if (float(trade.qty) > 10):
 				signal_discovered=True
 		if symbol_str == "XRPUSDT":
-			if (float(trade.qty) > 00000): 
+			if (float(trade.qty) > 100000): 
 				signal_discovered=True
 		if symbol_str == "KNCUSDT":
 			if (float(trade.qty) > 500): 
@@ -101,6 +101,7 @@ class SignalHelper():
 		if signal_discovered == True:
 			print ("spawning alert")
 			newSignal = Signal(symbol=symbol_str,
+					qty = str(trade.qty),
 					source = "BINANCE",
 					signal_type = "volume")
 			ns = newSignal.save()

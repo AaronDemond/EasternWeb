@@ -30,10 +30,8 @@ class Candle(models.Model):
 	def __str__(self):
 		return(self.symbol)
 
-
 class HistoricalBound(models.Model):
 	pass
-
 
 class HistoricalPrice(models.Model):
 
@@ -46,9 +44,14 @@ class HistoricalPrice(models.Model):
 	def __str__(self):
 		return (self.symbol + " " + str(self.price))
 
-
 class HistoricalTrend(models.Model):
 	pass
+
+class Price(models.Model):
+	symbol = models.CharField(max_length=200,null=True)
+	timestamp = models.FloatField(null=True)
+	source = models.CharField(max_length=200,null=True)
+	price = models.FloatField(null=True)
 
 class Signal(models.Model):
 
@@ -66,6 +69,8 @@ class Signal(models.Model):
 	total_quote = models.CharField(max_length=200,blank=True,null=True)
 
 	def __str__(self):
+		if self.symbol:
+			return (self.symbol)
 		return (str(self.id))
 
 class Trade(models.Model):

@@ -7,7 +7,7 @@
 
 Framework for Crypto and Traditional market analysis
 ------
-Use the website (see: src/website) as a local API to gather market data.
+Use the project (see: src/website) as a local API to gather market data. Analysis tools in development.
 
 Runtime Instructions (uses Python3):
 ----------------

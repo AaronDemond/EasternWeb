@@ -5,8 +5,8 @@
 
 
 
-
-
+Framework for crypto and traditional market analysis
+------------------------
 
 
 Runtime Instructions (uses Python3):

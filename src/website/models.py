@@ -8,6 +8,7 @@ class HistoricalPrice:        crypto market price data
 class HistoricalTrend.........confirmed historal movement
 class Signal:                 Market signals
 class Trade(models.Model):....trades executed on Binance.com
+class Price:                  Market price object
 '''
 
 class Candle(models.Model):

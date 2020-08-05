@@ -5,8 +5,8 @@
 
 
 
-Framework for crypto and traditional market analysis
-------------------------
+Framework for Crypto and Traditional market analysis
+------
 Use the website (see: src/website) as a local API to gather market data.
 
 Runtime Instructions (uses Python3):

@@ -16,7 +16,7 @@ import urllib.request
 import datetime, time
 
 class Helper():
-	'''general helper functions'''
+	''' General helper functions '''
 
 	def sort(self,signals):
 		'''Accepts a queryset or list of signals and returns a
@@ -38,9 +38,11 @@ class Helper():
 		return signalList.sort(key=getQty,reverse=True)
 
 class SignalHelper():
-	'''signal generation functions'''
+	''' Signal generation functions '''
 
 	def getPriceChangeAlert(self,price_QS, symbol_str):
+		'''Accepts a QuerySet object & symbolpair and writes a price change
+		   signal to db if requirements are hit '''
 
 			n = [float(price_QS[0].price), float(price_QS[1].price)]
 				# [0] = newer
@@ -61,6 +63,9 @@ class SignalHelper():
 			return alert_str
 
 	def generateVolumeSignal(self, trade, symbol_str):
+		''' Accepts a trade object & symbolpair and writes a signal 
+		   to db if requirements are hit '''
+
 		signal_discovered = False
 		if symbol_str == "BTCUSDT":
 			if (float(trade.qty) > 1.2):

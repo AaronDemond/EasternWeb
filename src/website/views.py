@@ -30,7 +30,6 @@ BINANCE_24HR_SNAPSHOT_url = "https://api.binance.com/api/v3/ticker/24hr"
 def trades_from_json(json,symbol="NONE",source='BINANCE'):
 	''' Accepts json trade data and writes to db '''	
 
-	sh = SignalHelper()
 	tradelist = []
 	for trade in json:
 		ibm=False

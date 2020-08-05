@@ -44,23 +44,23 @@ class SignalHelper():
 		'''Accepts a QuerySet object & symbolpair and writes a price change
 		   signal to db if requirements are hit '''
 
-			n = [float(price_QS[0].price), float(price_QS[1].price)]
-				# [0] = newer
-			p_change = (((n[0] - n[1])/n[1]) * 100)
-			if (p_change > 1):
-				newSignal = Signal(symbol=symbol_str+" PRICE ALERT")
-				s=newSignal.save()
-				alert_str= "Price increase alert: " + symbol_str + " " + str(p_change)
-				alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
-			if (p_change < 0):
-				newSignal = Signal(symbol=symbol_str+" PRICE ALERT")
-				s=newSignal.save()
-				alert_str= "Price decrease alert: " + symbol_str + " " + str(p_change)
-				alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
-			else:
-				alert_str = "No major movement: " + symbol_str + " " + str(n[0])
-				alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
-			return alert_str
+		n = [float(price_QS[0].price), float(price_QS[1].price)]
+			# [0] = newer
+		p_change = (((n[0] - n[1])/n[1]) * 100)
+		if (p_change > 1):
+			newSignal = Signal(symbol=symbol_str+" PRICE ALERT")
+			s=newSignal.save()
+			alert_str= "Price increase alert: " + symbol_str + " " + str(p_change)
+			alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
+		if (p_change < 0):
+			newSignal = Signal(symbol=symbol_str+" PRICE ALERT")
+			s=newSignal.save()
+			alert_str= "Price decrease alert: " + symbol_str + " " + str(p_change)
+			alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
+		else:
+			alert_str = "No major movement: " + symbol_str + " " + str(n[0])
+			alert_str= alert_str + "\nFrom " + str(n[1]) + " to " + str(n[0])
+		return alert_str
 
 	def generateVolumeSignal(self, trade, symbol_str):
 		''' Accepts a trade object & symbolpair and writes a signal 

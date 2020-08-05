@@ -28,7 +28,7 @@ BINANCE_24HR_SNAPSHOT_url = "https://api.binance.com/api/v3/ticker/24hr"
 # pair list
 
 def trades_from_json(json,symbol="NONE",source='BINANCE'):
-	''' Accepts js (JSON trade data) and writes to db '''	
+	''' Accepts json trade data and writes to db '''	
 
 	sh = SignalHelper()
 	tradelist = []
@@ -57,9 +57,7 @@ def get_binance_json(url):
 
 from website.crypto import SignalHelper
 def __get_last_price(request):
-	''' Returns an HTML formated string of             '''
-	'''  the given ticker                              '''
-	'''  market price                                  '''
+	''' takes url param "symbol" and writes price / possible signal to db '''
 
 	symbol_str = request.GET.get('symbol','LTCBTC')
 	url_str = BINANCE_TICKER_URL + '?symbol=' + symbol_str
@@ -83,7 +81,7 @@ def __get_last_price(request):
 
 def trades(request):
 	''' /trades?symbol[symbol] '''
-	''' writes trades to a database and returns write/fail data '''
+	''' writes trades / possible signal to a database and returns write/fail data '''
 	''' rendered by /templates/invest.html '''
 
 	symbol_str = request.GET.get('symbol','')
@@ -100,6 +98,7 @@ def trades(request):
 
 def invest(request):	
 	'''Returns general market info'''
+
 	context={}
 	context['pair_listings'] = get_binance_json(BINANCE_TICKER_URL)
 	context['snapshot'] = get_binance_json(BINANCE_24HR_SNAPSHOT_url)
@@ -107,7 +106,8 @@ def invest(request):
 
 def index(request):
 	''' Home page '''
-	context = { 'data' : 12345 }
+
+	context = {}
 	try:
 		value= request.POST['email']
 		user = User.objects.create_user(value, value, '12345')

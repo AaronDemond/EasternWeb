@@ -17,6 +17,7 @@ import datetime, time
 
 class Helper():
 	'''general helper functions'''
+
 	def sort(self,signals):
 		'''Accepts a queryset or list of signals and returns a
 		   list sorted by its quantity
@@ -38,11 +39,11 @@ class Helper():
 
 class SignalHelper():
 	'''signal generation functions'''
-	def getPriceChangeAlert(self,recentBTCUSDTPrice_QS, symbol_str):
-			rbpq = recentBTCUSDTPrice_QS
 
-			n = [float(rbpq[0].price), float(rbpq[1].price)]
-				# n[0] = newer
+	def getPriceChangeAlert(self,price_QS, symbol_str):
+
+			n = [float(price_QS[0].price), float(price_QS[1].price)]
+				# [0] = newer
 			p_change = (((n[0] - n[1])/n[1]) * 100)
 			if (p_change > 1):
 				newSignal = Signal(symbol=symbol_str+" PRICE ALERT")
@@ -82,14 +83,3 @@ class SignalHelper():
 			ns = newSignal.save()
 			return True
 		return False
-
-	def someFunction(self):
-		return("hello world")
-
-	def getBigTrades(self,symbol):
-		bt=[]
-		for trade in tradelist:
-			if float(trade.qty) > qty_min:
-				if trade.symbol == symbol:
-					bt.append(trade)
-		return bt	

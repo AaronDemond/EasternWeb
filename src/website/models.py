@@ -48,11 +48,6 @@ class HistoricalPrice(models.Model):
 class HistoricalTrend(models.Model):
 	pass
 
-class Price(models.Model):
-	symbol = models.CharField(max_length=200,null=True)
-	timestamp = models.FloatField(null=True)
-	source = models.CharField(max_length=200,null=True)
-	price = models.FloatField(null=True)
 
 class Signal(models.Model):
 
@@ -64,6 +59,7 @@ class Signal(models.Model):
 	data  = models.CharField(max_length=200,blank=True,null=True)
 	symbol = models.CharField(max_length=200,blank=True,null=True)
 	price = models.CharField(max_length=200,blank=True,null=True)
+	price_object = models.ForeignKey(HistoricalPrice, on_delete=models.CASCADE, null=True)
 	qty = models.CharField(max_length=200,blank=True,null=True)
 	timestamp = models.CharField(max_length=200,blank=True,null=True)
 	price_change = models.CharField(max_length=200,blank=True,null=True)
@@ -89,4 +85,4 @@ class Trade(models.Model):
 		if self.symbol:
 			return(self.symbol)
 		else:
-			return("NO SYMBOL GIVEN likely btc")
+			return("NA")

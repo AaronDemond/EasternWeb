@@ -128,9 +128,6 @@ def insights(request):
 	l=[]
 	for h in historicalPrices:
 		l.append(h)
-
-	l.append("kek")
-	print(l)
 	context = { "test" : l, 'signals' : signals }
 
 	return render(request, 'insight.html', context)

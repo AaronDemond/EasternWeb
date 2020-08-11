@@ -1,4 +1,5 @@
 import time
+from website.crypto import SignalHelper
 import datetime
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
@@ -106,7 +107,7 @@ def invest(request):
 def index(request):
 	''' Home page '''
 
-	context = {}
+	context = { }
 	try:
 		value= request.POST['email']
 		user = User.objects.create_user(value, value, '12345')
@@ -117,13 +118,21 @@ def index(request):
 
 def insights(request):
 	'''returns useful crypto info'''
+	symbol_str = request.GET.get('symbol','BTCUSDT')
+	qty = request.GET.get('sig_qty','10')
+	qty=int(qty)
+	signals = Signal.objects.filter(symbol__contains=symbol_str).order_by("-id")[:qty]
 
-	from website.crypto import SignalHelper
-	sh = SignalHelper()
-	bt=sh.getBigTrades(symbol="BTCUSDT", tradelist=[t for t in Trade.objects.all().order_by("-id")[:100000]], qty_min = 10)
-	context={'bt':bt}
+	print ("test")
+	historicalPrices = HistoricalPrice.objects.all().order_by("-time")[:10]
+	l=[]
+	for h in historicalPrices:
+		l.append(h)
 
-	# return rendered template
+	l.append("kek")
+	print(l)
+	context = { "test" : l, 'signals' : signals }
+
 	return render(request, 'insight.html', context)
 
 def getCandleData(request):

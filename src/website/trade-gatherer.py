@@ -7,7 +7,6 @@ SYMBOLPAIRS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'XLMUSDT', 'KNCUSDT', 'DASHUSDT'
 VERSION="0.0"
 GREETING="EasternWeb Project \nVersion: "+VERSION+"\n------"
 
-
 def __main__():
 	dg = DataGatherer()
 	while True:	

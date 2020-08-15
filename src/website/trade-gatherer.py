@@ -17,6 +17,9 @@ def __main__():
 		print("sleeping")
 		print("--------")
 		time.sleep(1)
+
+
+
 def cls():
 	os.system('cls' if os.name=='nt' else 'clear')
 
@@ -33,5 +36,7 @@ class DataGatherer():
 	def gather_tradeData(self,symbol='BTCUSDT'):
 		r=requests.get("http://localhost:8000/trades?symbol=" + symbol)
 		return(symbol + " trade-objs > db")
+
+
 
 __main__()

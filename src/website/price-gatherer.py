@@ -3,7 +3,7 @@ from colorama import Fore, Style
 
 import requests, time
 import os
-SYMBOLPAIRS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'XLMUSDT', 'KNCUSDT', 'DASHUSDT', 'RLCUSDT', 'BANDUSDT', 'DOGEUSDT', 'DOGEBTC', 'BATUSDT']
+SYMBOLPAIRS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'XLMUSDT', 'KNCUSDT', 'DASHUSDT', 'RLCUSDT', 'BANDUSDT', 'DOGEUSDT', 'DOGEBTC', 'BATUSDT', 'EOSUSDT']
 VERSION="0.0"
 GREETING="EasternWeb Project \nVersion: "+VERSION+"\n------"
 

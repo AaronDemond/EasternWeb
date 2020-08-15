@@ -1,4 +1,3 @@
-from website.models import Signal, Trade
 import datetime
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
@@ -101,3 +100,13 @@ class SignalHelper():
 			ns = newSignal.save()
 			return True
 		return False
+class TickerSymbol():
+	def __init__(self):
+		self.SYMBOLPAIRS=SYMBOLPAIRS
+
+	def getPairStrList(self,searchStr):
+		l=[]
+		for p in self.SYMBOLPAIRS:
+			if searchStr in p:
+				l.append(p)
+		return l

@@ -1,5 +1,5 @@
 import time
-from website.crypto import SignalHelper
+from website.crypto import SignalHelper, TickerSymbol
 import datetime
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
@@ -116,19 +116,59 @@ def index(request):
 		value = -1
 	return render(request, 'index.html', context)
 
+
+
+
+def returnFilteredHistoricalPrices(hpl, step, qty=20):
+	'''returns historical price list spaced by step (seconds)'''
+	
+	timestamp_str = datetime.datetime.now().timestamp()
+	cur_max = float(timestamp_str)
+	l=[]
+	counter = 0
+	for historical_price in hpl:
+		if float(historical_price.time) <= cur_max :
+			l.append(historical_price)
+			counter = counter + 1
+			cur_max = cur_max - step
+			if counter == qty:
+				return l
+			
 def insights(request):
 	'''returns useful crypto info'''
-	symbol_str = request.GET.get('symbol','BTCUSDT')
-	qty = request.GET.get('sig_qty','10')
-	qty=int(qty)
-	signals = Signal.objects.filter(symbol__contains=symbol_str).order_by("-id")[:qty]
 
-	print ("test")
-	historicalPrices = HistoricalPrice.objects.all().order_by("-time")[:10]
-	l=[]
-	for h in historicalPrices:
-		l.append(h)
-	context = { "test" : l, 'signals' : signals }
+	symbolList=["BTCUSDT" , "ETHUSDT", "XRPUSDT", "EOSUSDT"]
+	symbolList.append(request.GET.get('symbol','BTCUSDT'))
+
+	signal_type = request.GET.get('signal_type','all')
+
+	qty = int(request.GET.get('qty','10'))
+	step = int(request.GET.get('step','15'))
+
+	context = {} # for browser
+
+	user_given_vars = {
+			'symbolList' : symbolList,
+			'signal_type' : signal_type,
+			'qty' : qty,
+			'step' : step,
+		}
+
+	context['user_given_vars'] = user_given_vars
+
+	_l=[]
+	_masterList = []
+	_signals = []
+
+	for x in symbolList:
+		hpl =  HistoricalPrice.objects.filter(symbol__contains=x).order_by("-time")
+		sl = Signal.objects.filter(symbol__contains=x).order_by("-id")[:qty]
+		hpl_filtered = returnFilteredHistoricalPrices(hpl, step)
+		_masterList.append(hpl_filtered)
+		_signals.append(sl)
+
+
+	context = { "historical_prices" : _masterList, 'signals' : _signals,  }
 
 	return render(request, 'insight.html', context)
 

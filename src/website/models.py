@@ -1,4 +1,4 @@
-import datetime
+import datetime, time
 from django.db import models 
 
 '''
@@ -44,6 +44,11 @@ class HistoricalPrice(models.Model):
 
 	def __str__(self):
 		return (self.symbol + " " + str(self.price))
+
+	@property
+	def humanReadableDate(self):
+		'''returns a str from a timestamp str (epoch)'''
+		return (time.asctime(time.gmtime(float(self.time))))
 
 class HistoricalTrend(models.Model):
 	pass

@@ -1,12 +1,9 @@
 from datetime import datetime
-from colorama import Fore, Style
+import os, requests, time
 
-import requests, time
-import os
 SYMBOLPAIRS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'XLMUSDT', 'KNCUSDT', 'DASHUSDT', 'RLCUSDT', 'BANDUSDT']
 VERSION="0.0"
 GREETING="EasternWeb Project \nVersion: "+VERSION+"\n------"
-
 
 def __main__():
 	dg = DataGatherer()
